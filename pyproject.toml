@@ -1,0 +1,90 @@
+[build-system]
+requires = [
+    "setuptools>=64",
+    "setuptools-scm>=8.0",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cosmic_integration_slurm_utils"
+dynamic = ["version"] # scm versioning (using tags)
+requires-python = ">=3.8"
+description = "Cosmic Integration Slurm utilities"
+readme = "README.md"
+authors = [
+    {name = "Avi Vajpeyi", email = "avi.vajpeyi@gmail.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.8",
+]
+dependencies = [
+    "arviz",
+    "spectral",
+    "scikit-fda",
+    "matplotlib",
+    "imageio",
+    "pygifsicle",
+    "bilby",
+    "statsmodels",
+    "loguru"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=4.1.0",
+    "pre-commit",
+    "flake8>=5.0.4",
+    "black>=22.12.0",
+    "jupyter-book",
+]
+
+[tool.setuptools_scm]
+version_file = "src/cosmic_integration_slurm_utils/_version.py"
+
+
+[project.urls]  # Optional
+"Homepage" = "https://github.com/avivajpeyi/cosmic_integration_slurm_utils"
+"Bug Reports" = "https://github.com/avivajpeyi/cosmic_integration_slurm_utils/issues"
+"Source" = "https://github.com/avivajpeyi/cosmic_integration_slurm_utils/"
+
+
+[tool.setuptools]
+package-data = { "cosmic_integration_slurm_utils" = [
+    "templates/*.sh",
+] }
+
+
+[project.scripts]
+cosmic_integration_slurm_builder = "cosmic_integration_slurm_utils.cli:main"
+
+
+[tool.black]
+line-length = 79
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
