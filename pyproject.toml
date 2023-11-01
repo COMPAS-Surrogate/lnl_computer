@@ -7,10 +7,10 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cosmic_integration_slurm_utils"
+name = "lnl_computer"
 dynamic = ["version"] # scm versioning (using tags)
 requires-python = ">=3.8"
-description = "Cosmic Integration Slurm utilities"
+description = "COMPAS detection Likelihood computer"
 readme = "README.md"
 authors = [
     {name = "Avi Vajpeyi", email = "avi.vajpeyi@gmail.com" },
@@ -45,23 +45,23 @@ dev = [
 ]
 
 [tool.setuptools_scm]
-version_file = "src/cosmic_integration_slurm_utils/_version.py"
+version_file = "src/lnl_computer/_version.py"
 
 
 [project.urls]  # Optional
-"Homepage" = "https://github.com/avivajpeyi/cosmic_integration_slurm_utils"
-"Bug Reports" = "https://github.com/avivajpeyi/cosmic_integration_slurm_utils/issues"
-"Source" = "https://github.com/avivajpeyi/cosmic_integration_slurm_utils/"
+"Homepage" = "https://github.com/avivajpeyi/compas_detection_likelihood_computer"
+"Bug Reports" = "https://github.com/avivajpeyi/compas_detection_likelihood_computer/issues"
+"Source" = "https://github.com/avivajpeyi/compas_detection_likelihood_computer/"
 
 
 [tool.setuptools]
-package-data = { "cosmic_integration_slurm_utils" = [
+package-data = { "lnl_computer" = [
     "templates/*.sh",
 ] }
 
 
 [project.scripts]
-cosmic_integration_slurm_builder = "cosmic_integration_slurm_utils.cli:main"
+lnl_computer_slurm_builder = "lnl_computer.slurm_utils.cli:main"
 
 
 [tool.black]
