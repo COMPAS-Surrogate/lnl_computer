@@ -1,28 +1,16 @@
-import io
 import os
 import shutil
-import time
-from contextlib import redirect_stdout
-from typing import Dict, Optional, Union
+from typing import Dict, Union
 
-import emcee
+
 import h5py
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from astropy import units
 from compas_python_utils.cosmic_integration.binned_cosmic_integrator.detection_matrix import (
     DetectionMatrix,
 )
-from matplotlib.gridspec import GridSpec
-from matplotlib.ticker import FormatStrFormatter, LinearLocator
-from scipy.interpolate import RectBivariateSpline
+from .. logger import logger
 
-from compas_surrogate.cosmic_integration.star_formation_paramters import (
-    DEFAULT_SF_PARAMETERS as DEFAULT,
-)
-from compas_surrogate.logger import logger
-from compas_surrogate.plotting import safe_savefig
 
 MC_RANGE = [3, 40]
 Z_RANGE = [0, 0.6]

@@ -1,4 +1,4 @@
-from lnl_surrogate.data_cache import DataCache
+from lnl_computer.data_cache import DataCache
 import numpy as np
 
 

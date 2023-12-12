@@ -9,15 +9,14 @@ import pandas as pd
 from tqdm.auto import tqdm
 from tqdm.contrib.concurrent import process_map
 
-from compas_surrogate.cosmic_integration.star_formation_paramters import (
+from ..cosmic_integration.star_formation_paramters import (
     DEFAULT_SF_PARAMETERS,
     draw_star_formation_samples,
 )
-from compas_surrogate.cosmic_integration.universe import Universe
-from compas_surrogate.logger import logger
-from compas_surrogate.plotting.gif_generator import make_gif
-from compas_surrogate.utils import get_num_workers
+from ..cosmic_integration.universe import Universe
+from ..logger import logger
 
+from ..utils import get_num_workers, make_gif
 
 def generate_matrix(compas_h5_path, sf_sample, save_images=False, outdir=".", fname=""):
     """Generate a detection matrix for a given set of star formation parameters"""

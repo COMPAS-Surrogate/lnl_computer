@@ -1,22 +1,21 @@
 import os
 import random
 from itertools import repeat
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 import h5py
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map
 
-from compas_surrogate.cosmic_integration.universe import MockPopulation, Universe
-from compas_surrogate.liklelihood import LikelihoodCache, ln_likelihood
-from compas_surrogate.logger import logger
-from compas_surrogate.plotting.image_utils import horizontal_concat
-from compas_surrogate.utils import get_num_workers
+from ..cosmic_integration.universe import MockPopulation, Universe
+from ..liklelihood import LikelihoodCache, ln_likelihood
+from ..logger import logger
+
+from ..utils import get_num_workers, horizontal_concat
 
 
-def _get_lnl_and_param_uni(uni: Universe, observed_mcz: np.ndarray):
+def _get_lnl_and_param_uni(uni: Universe, observed_mcz: np.ndarray) -> np.ndarray:
     lnl = ln_likelihood(
         mcz_obs=observed_mcz,
         model_prob_func=uni.prob_of_mcz,
@@ -27,22 +26,22 @@ def _get_lnl_and_param_uni(uni: Universe, observed_mcz: np.ndarray):
     return np.array([lnl, *uni.param_list])
 
 
-def _get_lnl_and_param_from_npz(npz_fn: str, observed_mcz: np.ndarray):
+def _get_lnl_and_param_from_npz(npz_fn: str, observed_mcz: np.ndarray) -> np.ndarray:
     uni = Universe.from_npz(npz_fn)
     return _get_lnl_and_param_uni(uni, observed_mcz)
 
 
-def _get_lnl_and_param_from_h5(h5_path: h5py.File, idx: int, observed_mcz: np.ndarray):
+def _get_lnl_and_param_from_h5(h5_path: h5py.File, idx: int, observed_mcz: np.ndarray) -> np.ndarray:
     uni = Universe.from_hdf5(h5py.File(h5_path, "r"), idx)
     return _get_lnl_and_param_uni(uni, observed_mcz)
 
 
 def compute_and_cache_lnl(
-    mock_population: MockPopulation,
-    cache_lnl_file: str,
-    h5_path: Optional[str] = "",
-    universe_paths: Optional[List] = None,
-):
+        mock_population: MockPopulation,
+        cache_lnl_file: str,
+        h5_path: Optional[str] = "",
+        universe_paths: Optional[List] = None,
+) -> LikelihoodCache:
     """
     Compute likelihoods given a Mock Population and universes (either stored in a h5 or the paths to the universe files).
     """
@@ -101,12 +100,12 @@ def compute_and_cache_lnl(
 
 
 def get_training_lnl_cache(
-    outdir,
-    n_samp=None,
-    det_matrix_h5=None,
-    universe_id=None,
-    mock_uni=None,
-    clean=False,
+        outdir,
+        n_samp=None,
+        det_matrix_h5=None,
+        universe_id=None,
+        mock_uni=None,
+        clean=False,
 ) -> LikelihoodCache:
     """
     Get the likelihood cache --> used for training the surrogate
@@ -133,7 +132,7 @@ def get_training_lnl_cache(
             if universe_id is None:
                 universe_id = random.randint(0, total_n_det_matricies)
             assert (
-                universe_id < total_n_det_matricies
+                    universe_id < total_n_det_matricies
             ), f"Universe id {universe_id} is larger than the number of det matricies {total_n_det_matricies}"
             mock_uni = Universe.from_hdf5(h5_file, universe_id)
         else:

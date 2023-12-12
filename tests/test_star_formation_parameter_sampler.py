@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from compas_surrogate.cosmic_integration.star_formation_paramters import (
+from lnl_computer.cosmic_integration.star_formation_paramters import (
     draw_star_formation_samples,
 )
 

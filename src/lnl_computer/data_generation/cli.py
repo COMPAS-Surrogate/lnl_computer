@@ -1,10 +1,10 @@
 from argparse import ArgumentParser
 
-from compas_surrogate.data_generation.detection_matrix_generator import (
+from .detection_matrix_generator import (
     compile_matricies_into_hdf,
     generate_set_of_matricies,
 )
-from compas_surrogate.logger import logger
+from ..logger import logger
 
 
 def cli_matrix_generation():

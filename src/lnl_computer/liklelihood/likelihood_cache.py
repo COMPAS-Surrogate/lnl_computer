@@ -5,9 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from compas_surrogate.logger import logger
-from compas_surrogate.plotting import safe_savefig
-from compas_surrogate.plotting.corner import plot_corner
+from ..logger import logger
+from ..utils import safe_savefig, plot_corner
 
 
 class LikelihoodCache(object):

@@ -1,6 +1,6 @@
 import os
 
-from compas_surrogate.data_generation.detection_matrix_generator import (
+from lnl_computer.data_generation.detection_matrix_generator import (
     generate_set_of_matricies,
 )
 

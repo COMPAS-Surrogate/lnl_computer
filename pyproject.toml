@@ -31,7 +31,9 @@ dependencies = [
     "pygifsicle",
     "bilby",
     "statsmodels",
-    "loguru"
+    "loguru",
+    "astropy",
+    "compas_python_utils@git+https://github.com/TeamCOMPAS/COMPAS.git"
 ]
 
 [project.optional-dependencies]

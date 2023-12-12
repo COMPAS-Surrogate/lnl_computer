@@ -1,13 +1,6 @@
-import os
-import random
-from itertools import repeat
-from typing import Dict, List, Optional
+from typing import Dict, List
 
-import h5py
 import numpy as np
-import pandas as pd
-from tqdm import tqdm
-from tqdm.contrib.concurrent import process_map
 import xarray as xr
 
 from dataclasses import dataclass
@@ -29,9 +22,8 @@ class DataCache:
     x: xr.Dataset
     y: xr.Dataset
 
-
     @classmethod
-    def from_dataset(cls, d:xr.Dataset):
+    def from_dataset(cls, d: xr.Dataset):
         """Create a DataCache from an xarray dataset."""
         x = d[d.attrs["in_params"]]
         y = d[d.attrs["out_params"]]
@@ -69,7 +61,7 @@ class DataCache:
         idx = np.arange(len(self))
         np.random.shuffle(idx)
         train_idx = idx[: int(frac_train * len(self))]
-        test_idx = idx[int(frac_train * len(self)) :]
+        test_idx = idx[int(frac_train * len(self)):]
 
         train_data = DataCache.from_dataset(self.data.isel(sample=train_idx))
         test_data = DataCache.from_dataset(self.data.isel(sample=test_idx))
@@ -78,10 +70,8 @@ class DataCache:
             DataCache(test_data.x, test_data.y),
         ]
 
-
     def __len__(self):
         return len(self.x.sample)
-
 
     @property
     def x_array(self):
@@ -89,7 +79,6 @@ class DataCache:
         Each row is a sample, each column is a parameter.
         """
         return self.x.to_array().values.T
-
 
     @property
     def y_array(self):
