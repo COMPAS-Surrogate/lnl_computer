@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
 
 from .detection_matrix_generator import (
-    compile_matricies_into_hdf,
-    generate_set_of_matricies,
+    compile_matrices_into_hdf,
+    generate_set_of_matrices,
 )
 from ..logger import logger
 
@@ -41,7 +41,7 @@ def cli_matrix_generation():
     )
     args = parser.parse_args()
     logger.info(f"Running matrix generation with args: {args}")
-    generate_set_of_matricies(
+    generate_set_of_matrices(
         compas_h5_path=args.compas_h5_path,
         n=args.n,
         save_images=args.save_images,
@@ -60,7 +60,7 @@ def cli_compile_h5():
     parser.add_argument("--fname", type=str, help="name of output h5 file")
     args = parser.parse_args()
     logger.info(f"Running h5 complier args: {args}")
-    compile_matricies_into_hdf(
+    compile_matrices_into_hdf(
         npz_regex=args.npz_regex,
         fname=args.fname,
     )

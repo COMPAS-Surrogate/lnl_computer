@@ -1,13 +1,13 @@
 import os
 
 from lnl_computer.data_generation.detection_matrix_generator import (
-    generate_set_of_matricies,
+    generate_set_of_matrices,
 )
 
 
 def test_datagen(tmp_path, test_datapath):
     os.chdir(tmp_path)
-    generate_set_of_matricies(
+    generate_set_of_matrices(
         compas_h5_path=test_datapath,
         n=1,
         save_images=False,

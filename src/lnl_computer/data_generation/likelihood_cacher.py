@@ -8,14 +8,15 @@ import numpy as np
 from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map
 
-from ..cosmic_integration.universe import MockPopulation, Universe
+from ..cosmic_integration.mcz_grid import McZGrid
+from ..observation.mock_observation import MockObservation
 from ..liklelihood import LikelihoodCache, ln_likelihood
 from ..logger import logger
 
 from ..utils import get_num_workers, horizontal_concat
 
 
-def _get_lnl_and_param_uni(uni: Universe, observed_mcz: np.ndarray) -> np.ndarray:
+def _get_lnl_and_param_uni(uni: McZGrid, observed_mcz: np.ndarray) -> np.ndarray:
     lnl = ln_likelihood(
         mcz_obs=observed_mcz,
         model_prob_func=uni.prob_of_mcz,
@@ -27,29 +28,29 @@ def _get_lnl_and_param_uni(uni: Universe, observed_mcz: np.ndarray) -> np.ndarra
 
 
 def _get_lnl_and_param_from_npz(npz_fn: str, observed_mcz: np.ndarray) -> np.ndarray:
-    uni = Universe.from_npz(npz_fn)
+    uni = McZGrid.from_npz(npz_fn)
     return _get_lnl_and_param_uni(uni, observed_mcz)
 
 
 def _get_lnl_and_param_from_h5(h5_path: h5py.File, idx: int, observed_mcz: np.ndarray) -> np.ndarray:
-    uni = Universe.from_hdf5(h5py.File(h5_path, "r"), idx)
+    uni = McZGrid.from_hdf5(h5py.File(h5_path, "r"), idx)
     return _get_lnl_and_param_uni(uni, observed_mcz)
 
 
 def compute_and_cache_lnl(
-        mock_population: MockPopulation,
+        mock_population: MockObservation,
         cache_lnl_file: str,
         h5_path: Optional[str] = "",
-        universe_paths: Optional[List] = None,
+        mcz_grid_paths: Optional[List] = None,
 ) -> LikelihoodCache:
     """
-    Compute likelihoods given a Mock Population and universes (either stored in a h5 or the paths to the universe files).
+    Compute likelihoods given a Mock Population and mcz_grids (either stored in a h5 or the paths to the mcz_grid files).
     """
-    if universe_paths is not None:
-        n = len(universe_paths)
+    if mcz_grid_paths is not None:
+        n = len(mcz_grid_paths)
         args = (
             _get_lnl_and_param_from_npz,
-            universe_paths,
+            mcz_grid_paths,
             repeat(mock_population.mcz),
         )
     elif h5_path is not None:
@@ -61,9 +62,9 @@ def compute_and_cache_lnl(
             repeat(mock_population.mcz),
         )
     else:
-        raise ValueError("Must provide either hf5_path or universe_paths")
+        raise ValueError("Must provide either hf5_path or mcz_grid_paths")
 
-    logger.info(f"Starting LnL computation for {n} universes")
+    logger.info(f"Starting LnL computation for {n} mcz_grids")
 
     try:
         lnl_and_param_list = np.array(
@@ -84,8 +85,8 @@ def compute_and_cache_lnl(
         )
     true_lnl = ln_likelihood(
         mcz_obs=mock_population.mcz,
-        model_prob_func=mock_population.universe.prob_of_mcz,
-        n_model=mock_population.universe.n_detections(),
+        model_prob_func=mock_population.mcz_grid.prob_of_mcz,
+        n_model=mock_population.mcz_grid.n_detections(),
     )
     lnl_cache = LikelihoodCache(
         lnl=lnl_and_param_list[:, 0],
@@ -103,18 +104,18 @@ def get_training_lnl_cache(
         outdir,
         n_samp=None,
         det_matrix_h5=None,
-        universe_id=None,
+        mcz_grid_id=None,
         mock_uni=None,
         clean=False,
 ) -> LikelihoodCache:
     """
     Get the likelihood cache --> used for training the surrogate
-    Specify the det_matrix_h5 and universe_id to generate a new cache
+    Specify the det_matrix_h5 and mcz_grid_id to generate a new cache
 
     :param outdir: outdir to store the cache (stored as OUTDIR/cache_lnl.npz)
     :param n_samp: number of samples to save in the cache (all samples used if None)
     :param det_matrix_h5: the detection matrix used to generate the lnl cache
-    :param universe_id: the universe id used to generate the lnl cache
+    :param mcz_grid_id: the mcz_grid id used to generate the lnl cache
     """
     cache_file = f"{outdir}/cache_lnl.npz"
     if clean and os.path.exists(cache_file):
@@ -129,19 +130,19 @@ def get_training_lnl_cache(
         total_n_det_matricies = len(h5_file["detection_matricies"])
 
         if mock_uni is None:
-            if universe_id is None:
-                universe_id = random.randint(0, total_n_det_matricies)
+            if mcz_grid_id is None:
+                mcz_grid_id = random.randint(0, total_n_det_matricies)
             assert (
-                    universe_id < total_n_det_matricies
-            ), f"Universe id {universe_id} is larger than the number of det matricies {total_n_det_matricies}"
-            mock_uni = Universe.from_hdf5(h5_file, universe_id)
+                    mcz_grid_id < total_n_det_matricies
+            ), f"mcz_grid id {mcz_grid_id} is larger than the number of det matricies {total_n_det_matricies}"
+            mock_uni = McZGrid.from_hdf5(h5_file, mcz_grid_id)
         else:
-            assert isinstance(mock_uni, Universe)
+            assert isinstance(mock_uni, McZGrid)
 
         mock_population = mock_uni.sample_possible_event_matrix()
         mock_population.plot(save=True, fname=f"{outdir}/injection.png")
         logger.info(
-            f"Generating cache {cache_file} using {det_matrix_h5} and universe {universe_id}:{mock_population}"
+            f"Generating cache {cache_file} using {det_matrix_h5} and mcz_grid {mcz_grid_id}:{mock_population}"
         )
         lnl_cache = compute_and_cache_lnl(
             mock_population, cache_file, h5_path=det_matrix_h5

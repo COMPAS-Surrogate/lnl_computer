@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Callable, Union, Tuple
 
 import numpy as np
 
@@ -10,6 +10,9 @@ def ln_poisson_likelihood(n_obs: int, n_model: int, ignore_factorial=True) -> fl
     :param n_obs: number of observed events
     :param n_model: number of events predicted by the model
     :param ignore_factorial: ignore the factorial term in the likelihood
+
+    # TODO: Why are we ignoring the factorial term?? It was in Ilya's notes from 2023, but unsure why...
+
     :return: the log likelihood
     """
     if n_model <= 0:
@@ -33,15 +36,14 @@ def ln_mcz_grid_likelihood(mcz_obs: np.ndarray, model_prob_func: Callable) -> fl
 
 
 def ln_likelihood(
-    mcz_obs: np.ndarray,
-    model_prob_func: Callable,
-    n_model: float,
-    detailed=False,
-) -> Union[float, tuple]:
+        mcz_obs: np.ndarray,
+        model_prob_func: Callable,
+        n_model: float,
+        detailed=False,
+) -> Union[float, Tuple[float, float, float]]:
     poisson_lnl = ln_poisson_likelihood(len(mcz_obs), n_model)
     mcz_lnl = ln_mcz_grid_likelihood(mcz_obs, model_prob_func)
     lnl = poisson_lnl + mcz_lnl
     if detailed:
         return lnl, poisson_lnl, mcz_lnl
-    else:
-        return lnl
+    return lnl

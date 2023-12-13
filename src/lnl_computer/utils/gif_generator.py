@@ -21,6 +21,7 @@ class GifGenerator:
         gg.make_gif()
 
     def make_gif(self):
+        logger.info(f"Making gif from {self.regex}-> {self.fname}")
         images = []
         for fname in self.image_fnames:
             images.append(Image.open(fname))
