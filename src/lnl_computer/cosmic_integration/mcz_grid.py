@@ -1,6 +1,6 @@
 import os
 import shutil
-from typing import Dict, Union, List, Tuple
+from typing import Dict, List, Tuple, Union
 
 import h5py
 import numpy as np
@@ -8,8 +8,10 @@ import pandas as pd
 from compas_python_utils.cosmic_integration.binned_cosmic_integrator.detection_matrix import (
     DetectionMatrix,
 )
+
 from ..logger import logger
 from .star_formation_paramters import DEFAULT_SF_PARAMETERS
+from ..likelihood import ln_likelihood
 
 
 class McZGrid(DetectionMatrix):
@@ -56,7 +58,9 @@ class McZGrid(DetectionMatrix):
             n_systems=data["n_systems"],
             n_bbh=data["n_bbh"],
             outdir=data.get("outdir", "."),
-            bootstrapped_rate_matrices=data.get("bootstrapped_rate_matrices", None),
+            bootstrapped_rate_matrices=data.get(
+                "bootstrapped_rate_matrices", None
+            ),
         )
         logger.debug(f"Loaded cached det_matrix with: {det_matrix.param_str}")
         return det_matrix
@@ -116,46 +120,22 @@ class McZGrid(DetectionMatrix):
 
         return mcz_grid
 
-    @property
-    def mcz_rate_df(self) -> pd.DataFrame:
-        """The mcz_grid as a pandas dataframe with columns (mc, z, rate), sorted by rate (high to low)"""
-        if not hasattr(self, "_mcz_rate_df"):
-            z, mc = self.redshift_bins, self.chirp_mass_bins
-            rate = self.rate_matrix.ravel()
-            zz, mcc = np.meshgrid(z, mc)
-            df = pd.DataFrame({"z": zz.ravel(), "mc": mcc.ravel(), "rate": rate})
-            df = df.sort_values("rate", ascending=False)
-
-            # drop nans and log the number of rows dropped
-            n_nans = df.isna().any(axis=1).sum()
-            if n_nans > 0:
-                logger.warning(f"Dropping {n_nans}/{len(df)} rows with nan values")
-                df = df.dropna()
-
-            # check no nan in dataframe
-            if df.isna().any().any():
-                logger.error("Nan values in dataframe")
-
-            self._mcz_rate_df = df
-        return self._mcz_rate_df
-
     def save(self, fname="") -> None:
         """Save the mcz_grid object to a npz file, return the filename"""
         super().save()
         if fname != "":
-            orig_fname = f"{self.outdir}/{self.label}.h5"
-            shutil.move(orig_fname, fname)
+            shutil.move(self.default_fname, fname)
 
     def get_matrix_bin_idx(self, mc: float, z: float) -> Tuple[int, int]:
         mc_bin = np.argmin(np.abs(self.chirp_mass_bins - mc))
         z_bin = np.argmin(np.abs(self.redshift_bins - z))
         return mc_bin, z_bin
 
-    def prob_of_mcz(self, mc: float, z: float, duration: float = 1.) -> float:
+    def prob_of_mcz(self, mc: float, z: float, duration: float = 1.0) -> float:
         mc_bin, z_bin = self.get_matrix_bin_idx(mc, z)
         return self.rate_matrix[mc_bin, z_bin] / self.n_detections(duration)
 
-    def get_bootstrapped_uni(self, i: int) -> "McZGrid":
+    def get_bootstrapped_grid(self, i: int) -> "McZGrid":
         """Creates a new Uni using the ith bootstrapped rate matrix"""
         assert (
                 i < self.n_bootstraps
@@ -171,10 +151,28 @@ class McZGrid(DetectionMatrix):
             outdir=self.outdir,
         )
 
-    def n_detections(self, duration: float = 1.) -> float:
+    def n_detections(self, duration: float = 1.0) -> float:
         """Calculate the number of detections in a given duration (in years)"""
-        marginalised_detection_rate = np.nansum(self.rate_matrix)
-        return marginalised_detection_rate * duration
+        return np.nansum(self.rate_matrix) * duration
+
+    def get_lnl(self, mcz_obs: np.ndarray, duration: float = 1.0) -> Tuple[float, float]:
+        """Get Lnl+/-unc from the mcz_obs"""
+        lnl = ln_likelihood(
+            mcz_obs=mcz_obs,
+            model_prob_func=self.prob_of_mcz,
+            n_model=self.n_detections(duration)
+        )
+        bootstrapped_lnls = []
+        for i in range(self.n_bootstraps):
+            bootstrap_mcz_grid = self.get_bootstrapped_grid(i)
+            bootstrapped_lnls.append(
+                ln_likelihood(
+                    mcz_obs=mcz_obs,
+                    model_prob_func=bootstrap_mcz_grid.prob_of_mcz,
+                    n_model=bootstrap_mcz_grid.n_detections(duration),
+                )
+            )
+        return lnl, np.std(np.array(bootstrapped_lnls))
 
     def __dict__(self) -> Dict:
         return self.to_dict()
@@ -184,8 +182,7 @@ class McZGrid(DetectionMatrix):
 
     @property
     def label(self) -> str:
-        l = super().label
-        return l.replace("detmatrix", "mczgrid")
+        return super().label.replace("detmatrix", "mczgrid")
 
     @property
     def default_fname(self) -> str:
@@ -201,15 +198,32 @@ class McZGrid(DetectionMatrix):
 
     @property
     def n_bootstraps(self) -> int:
+        if self.bootstrapped_rate_matrices is None:
+            return 0
         return len(self.bootstrapped_rate_matrices)
 
     @classmethod
-    def generate_n_save(cls, compas_h5_path: str, sf_sample: Dict, save_plots: bool = False, outdir=None,
-                        fname="") -> None:
-        """Generate a detection matrix for a given set of star formation parameters"""
+    def generate_n_save(
+            cls,
+            compas_h5_path: str,
+            sf_sample: Dict,
+            save_plots: bool = False,
+            outdir=None,
+            fname="",
+            n_bootstraps=0,
+    ) -> "McZGrid":
+        """ Generate a detection matrix for a given set of star formation parameters
+        :param compas_h5_path:
+        :param sf_sample: Dict of star formation parameters
+        :param save_plots: Bool to save plots
+        :param outdir: outdir for plots + mcz_grid
+        :param fname: mcgrid-fname (if empty, will not save)
+        :param n_bootstraps: N
+        :return:
+        """
         if os.path.isfile(fname):
             logger.warning(f"Skipping {fname} generation as it already exists")
-            return
+            return cls.from_h5(fname)
 
         mcz_grid = cls.from_compas_output(
             compas_path=compas_h5_path,
@@ -217,12 +231,39 @@ class McZGrid(DetectionMatrix):
                 aSF=sf_sample.get("aSF", DEFAULT_SF_PARAMETERS["aSF"]),
                 dSF=sf_sample.get("dSF", DEFAULT_SF_PARAMETERS["dSF"]),
                 mu_z=sf_sample.get("muz", DEFAULT_SF_PARAMETERS["muz"]),
-                sigma_0=sf_sample.get("sigma0", DEFAULT_SF_PARAMETERS["sigma0"]),
+                sigma_0=sf_sample.get(
+                    "sigma0", DEFAULT_SF_PARAMETERS["sigma0"]
+                ),
             ),
             max_detectable_redshift=0.6,
             redshift_bins=np.linspace(0, 0.6, 100),
             chirp_mass_bins=np.linspace(3, 40, 50),
             outdir=outdir,
             save_plots=save_plots,
+            n_bootstrapped_matrices=n_bootstraps,
         )
-        mcz_grid.save(fname=fname)
+        if fname != "":
+            mcz_grid.save(fname=fname)
+        return mcz_grid
+
+    @classmethod
+    def lnl(cls, mcz_obs: np.ndarray, duration=1, *args) -> Tuple[float, float]:
+        """Return the LnL(sf_sample|mcz_obs)+/-unc
+
+        Also saves the Lnl+/-unc and params to a csv file
+
+        :param mcz_obs: The observed mcz values
+        :param duration: The duration of the observation (in years)
+        :param args: Arguments to pass to generate_n_save
+        :return: The LnL value
+        """
+        model = cls.generate_n_save(*args)
+        lnl, unc = model.get_lnl(mcz_obs=mcz_obs, duration=duration)
+        # save lnl data to csv
+        df = pd.DataFrame(dict(
+            lnl=lnl,
+            unc=unc,
+            **model.cosmological_parameters,
+        ), index=[0])
+        df.to_csv(f"{model.outdir}/{model.label}_lnl.csv", index=False)
+        return lnl, unc

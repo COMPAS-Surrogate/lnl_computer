@@ -63,7 +63,11 @@ package-data = { "lnl_computer" = [
 
 
 [project.scripts]
-lnl_computer_slurm_builder = "lnl_computer.slurm_utils.cli:main"
+combine_lnl_data = "lnl_computer.cli.cli:cli_combine_lnl_data"
+batch_lnl_generation = "lnl_computer.cli.cli:cli_batch_lnl_generation"
+make_mock_obs = "lnl_computer.cli.cli:cli_make_mock_obs"
+make_sf_table = "lnl_computer.cli.cli:cli_make_sf_table"
+make_mock_compas_output = "lnl_computer.cli.cli:cli_make_mock_compas_output"
 
 
 [tool.black]

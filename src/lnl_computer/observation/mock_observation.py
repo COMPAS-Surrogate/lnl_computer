@@ -1,7 +1,10 @@
-import numpy as np
-from ..cosmic_integration.mcz_grid import McZGrid
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+from ..cosmic_integration.mcz_grid import McZGrid
 from .observation import Observation
+from ..logger import logger
 
 
 class MockObservation(Observation):
@@ -19,16 +22,18 @@ class MockObservation(Observation):
         self.outdir = mcz_grid.outdir
 
     @classmethod
-    def sample_possible_event_matrix(
+    def from_mcz_grid(
             cls,
             mcz_grid: McZGrid,
-            duration: float = 1.,
+            duration: float = 1.0,
             n_obs: int = None,
     ) -> "MockObservation":
         """Make a fake detection matrix with the same shape as the mcz_grid"""
 
         rate2d = np.zeros(mcz_grid.rate_matrix.shape)
-        event_mcz = _sample_events_from_mcz_grid(mcz_grid, duration=duration, n_obs=n_obs)
+        event_mcz = _sample_events_from_mcz_grid(
+            mcz_grid, duration=duration, n_obs=n_obs
+        )
         for mc, z in event_mcz:
             mc_bin, z_bin = mcz_grid.get_matrix_bin_idx(mc, z)
             rate2d[mc_bin, z_bin] += 1
@@ -39,7 +44,12 @@ class MockObservation(Observation):
         fig = self.mcz_grid.plot()
         axes = fig.get_axes()
         axes[0].scatter(
-            self.mcz[:, 1], self.mcz[:, 0], s=15, c="dodgerblue", marker="*", alpha=0.95
+            self.mcz[:, 1],
+            self.mcz[:, 0],
+            s=15,
+            c="dodgerblue",
+            marker="*",
+            alpha=0.95,
         )
         fig.suptitle(f"Mock population ({self.n_events} blue stars)")
         axes[1].set_title(self.mcz_grid.param_str, fontsize=7)
@@ -64,12 +74,16 @@ class MockObservation(Observation):
     @classmethod
     def from_npz(cls, fname: str) -> "MockObservation":
         data = dict(np.load(fname, allow_pickle=True))
-        return cls(rate2d=data["rate2d"], mcz=data["mcz"], mcz_grid=McZGrid.from_dict(data))
+        return cls(
+            rate2d=data["rate2d"],
+            mcz=data["mcz"],
+            mcz_grid=McZGrid.from_dict(data),
+        )
 
 
 def _sample_events_from_mcz_grid(
         mcz_grid: McZGrid,
-        duration: float = 1.,
+        duration: float = 1.0,
         n_obs: float = None,
 ) -> np.ndarray:
     """
@@ -87,7 +101,7 @@ def _sample_events_from_mcz_grid(
     """
     n_obs = mcz_grid.n_detections(duration) if n_obs is None else n_obs
 
-    df = mcz_grid.mcz_rate_df
+    df = _mcz_to_df(mcz_grid)
     if np.sum(df.rate) > 0:
         n_events = df.sample(
             weights=df.rate, n=int(n_obs), random_state=0, replace=True
@@ -96,3 +110,29 @@ def _sample_events_from_mcz_grid(
         n_events = df.sample(n=int(n_obs), random_state=0)
 
     return n_events[["mc", "z"]].values
+
+
+def _mcz_to_df(mcz_grid) -> pd.DataFrame:
+    """The mcz_grid as a pandas dataframe with columns (mc, z, rate), sorted by rate (high to low)"""
+
+    z, mc = mcz_grid.redshift_bins, mcz_grid.chirp_mass_bins
+    rate = mcz_grid.rate_matrix.ravel()
+    zz, mcc = np.meshgrid(z, mc)
+    df = pd.DataFrame(
+        {"z": zz.ravel(), "mc": mcc.ravel(), "rate": rate}
+    )
+    df = df.sort_values("rate", ascending=False)
+
+    # drop nans and log the number of rows dropped
+    n_nans = df.isna().any(axis=1).sum()
+    if n_nans > 0:
+        logger.warning(
+            f"Dropping {n_nans}/{len(df)} rows with nan values"
+        )
+        df = df.dropna()
+
+    # check no nan in dataframe
+    if df.isna().any().any():
+        logger.error("Nan values in dataframe")
+
+    return df

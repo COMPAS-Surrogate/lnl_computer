@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Observation(ABC):
-
     def __init__(self, mcz: np.ndarray):
         """
         An observation of a population of BBHs.
@@ -27,7 +26,6 @@ class Observation(ABC):
     @abstractmethod
     def __dict__(self):
         pass
-
 
     @abstractmethod
     def plot(self) -> plt.Figure:

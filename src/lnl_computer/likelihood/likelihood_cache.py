@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 
 from ..logger import logger
-from ..utils import safe_savefig, plot_corner
 
 
 class LikelihoodCache(object):
@@ -43,7 +42,9 @@ class LikelihoodCache(object):
 
     def get_varying_params(self, ret_dict=False) -> Union[Dict, np.ndarray]:
         """Get the parameters that change"""
-        params = {k: v for k, v in self.param_dict.items() if not len(set(v)) == 1}
+        params = {
+            k: v for k, v in self.param_dict.items() if not len(set(v)) == 1
+        }
         if ret_dict:
             return params
         else:
@@ -86,7 +87,9 @@ class LikelihoodCache(object):
         """Get the likelihood of the true parameters"""
         if self.true_lnl is None:
             # get lnl value closest to true params
-            idx = np.argmin(np.sum(np.abs(self.params - self.true_params), axis=1))
+            idx = np.argmin(
+                np.sum(np.abs(self.params - self.true_params), axis=1)
+            )
             self.true_lnl = self.lnl[idx]
         return self.true_lnl
 
@@ -143,7 +146,9 @@ class LikelihoodCache(object):
 
     @property
     def true_param_vals(self):
-        data = np.array([self.true_dict[k] for k in self.get_varying_param_keys()])
+        data = np.array(
+            [self.true_dict[k] for k in self.get_varying_param_keys()]
+        )
         return data.reshape(1, -1)
 
     @property
@@ -167,7 +172,9 @@ class LikelihoodCache(object):
         Hist = namedtuple("Hist", ["hist", "bin_edges"])
         hists = {}
         if bins is None:
-            bins = {k: int(np.sqrt(len(df))) for k in self.get_varying_param_keys()}
+            bins = {
+                k: int(np.sqrt(len(df))) for k in self.get_varying_param_keys()
+            }
         for k in self.get_varying_param_keys():
             hist, bin_edges = np.histogram(df[k], bins=bins[k], density=True)
             hists[k] = Hist(hist, bin_edges)
