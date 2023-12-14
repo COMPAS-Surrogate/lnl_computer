@@ -116,7 +116,7 @@ def cli_combine_lnl_data(
 
 
 @click.command("mock_compas_output")
-@click.option('fname', type=str, default='mock_compas_output.h5')
+@click.option('--fname', type=str, default='mock_compas_output.h5')
 def cli_make_mock_compas_output(fname:str):
     """Generate a mock COMPAS output file at FNAME"""
     os.makedirs(os.path.dirname(fname), exist_ok=True)

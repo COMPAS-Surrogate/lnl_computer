@@ -154,10 +154,9 @@ def combine_lnl_data(
     :return: None
     """
     files = glob(f'{outdir}/*_lnl.csv')
-
     logger.info(f"Compiling {len(files)} LnL values to {outdir}/{fname}")
     df = pd.concat([pd.read_csv(f) for f in files])
-    df.to_csv(f"{outdir}/{fname}", index=False)
+    df.to_csv(f'{outdir}/{fname}', index=False)
 
 
 def _get_n_workers():
