@@ -180,6 +180,11 @@ class McZGrid(DetectionMatrix):
     def __repr__(self) -> str:
         return f"<mcz_grid: [{self.n_systems} systems], {self.param_str}>"
 
+
+    @property
+    def param_str(self):
+        return "_".join([f"{k}_{v:.6f}" for k, v in self.cosmological_parameters.items()])
+
     @property
     def label(self) -> str:
         return super().label.replace("detmatrix", "mczgrid")
@@ -224,6 +229,8 @@ class McZGrid(DetectionMatrix):
         if os.path.isfile(fname):
             logger.warning(f"Skipping {fname} generation as it already exists")
             return cls.from_h5(fname)
+        if fname != "" and not fname.endswith(".h5"):
+            logger.error(f"fname must end with .h5, got {fname}")
 
         mcz_grid = cls.from_compas_output(
             compas_path=compas_h5_path,
@@ -242,7 +249,7 @@ class McZGrid(DetectionMatrix):
             save_plots=save_plots,
             n_bootstrapped_matrices=n_bootstraps,
         )
-        if fname != "":
+        if isinstance(fname, str):
             mcz_grid.save(fname=fname)
         return mcz_grid
 
@@ -265,5 +272,7 @@ class McZGrid(DetectionMatrix):
             unc=unc,
             **model.cosmological_parameters,
         ), index=[0])
-        df.to_csv(f"{model.outdir}/{model.label}_lnl.csv", index=False)
+
+        fname = args[-2].replace(".h5", "_lnl.csv") if args[-2] != "" else f"{model.outdir}/{model.label}_lnl.csv"
+        df.to_csv(fname, index=False)
         return lnl, unc

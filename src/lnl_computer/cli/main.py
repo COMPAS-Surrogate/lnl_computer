@@ -30,6 +30,9 @@ import pandas as pd
 from ..logger import logger
 from ..cosmic_integration.star_formation_paramters import draw_star_formation_samples
 import click
+import uuid
+
+
 
 
 def make_sf_table(
@@ -131,7 +134,7 @@ def batch_lnl_generation(
         sf_params=parameter_table.to_dict("records"),
         save_plots=[save_images] * n,
         outdir=[outdir] * n,
-        fname=[f"{outdir}/uni_{i}.npz" for i in range(n)],
+        fname=["" for _ in range(n)],
         n_bootstraps=[n_bootstraps] * n,
     ).values()
     process_map(
