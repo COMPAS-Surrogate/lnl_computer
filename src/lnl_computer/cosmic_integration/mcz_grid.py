@@ -65,61 +65,6 @@ class McZGrid(DetectionMatrix):
         logger.debug(f"Loaded cached det_matrix with: {det_matrix.param_str}")
         return det_matrix
 
-    @classmethod
-    def from_hdf5(
-            cls,
-            h5file: Union[h5py.File, str],
-            idx: int = None,
-            search_param: Dict[str, float] = {},
-    ):
-        """Create a mcz_grid object from a hdf5 file (dont run cosmic integrator)"""
-        data = {}
-        common_keys = [
-            "compas_h5_path",
-            "n_systems",
-            "redshifts",
-            "chirp_masses",
-        ]
-
-        h5file_opened = False
-        if isinstance(h5file, str):
-            h5file = h5py.File(h5file, "r")
-            h5file_opened = True
-
-        for key in common_keys:
-            data[key] = h5file.attrs.get(key, None)
-            if data[key] is None:
-                logger.warning(
-                    f"Could not find {key} in hdf5 file. Attributes avail: {h5file.attrs.keys()}"
-                )
-
-        if idx is None:
-            params = h5file["parameters"]
-            search_val = [
-                search_param["aSF"],
-                search_param["bSF"],
-                search_param["cSF"],
-                search_param["dSF"],
-                search_param["muz"],
-                search_param["sigma0"],
-            ]
-            # get index of the closest match
-            idx = np.argmin(np.sum((params[:] - search_val) ** 2, axis=1))
-            logger.debug(f"Found closest match at index {idx}")
-
-        data["detection_rate"] = h5file["detection_matricies"][idx]
-        params = h5file["parameters"][idx]
-        data["SF"] = params[:4]
-        data["muz"] = params[4]
-        data["sigma0"] = params[5]
-        mcz_grid = cls(**data)
-        logger.debug(f"Loaded cached det_matrix with: {mcz_grid.param_str}")
-
-        if h5file_opened:
-            h5file.close()
-
-        return mcz_grid
-
     def save(self, fname="") -> None:
         """Save the mcz_grid object to a npz file, return the filename"""
         super().save()
