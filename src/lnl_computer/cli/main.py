@@ -146,7 +146,7 @@ def batch_lnl_generation(
 
 def combine_lnl_data(
         outdir: str = "out_mcz_grids",
-        fname: str = 'combined_lnl_data.csv',
+        fname: str = '',
 ) -> None:
     """
     Combine the likelihood data from the generated mcz-grids into a single file
@@ -157,9 +157,11 @@ def combine_lnl_data(
     :return: None
     """
     files = glob(f'{outdir}/*_lnl.csv')
+    if fname == '':
+        fname = f"{outdir}/combined_lnl_data.csv"
     logger.info(f"Compiling {len(files)} LnL values to {outdir}/{fname}")
     df = pd.concat([pd.read_csv(f) for f in files])
-    df.to_csv(f'{outdir}/{fname}', index=False)
+    df.to_csv(fname, index=False)
 
 
 def _get_n_workers():

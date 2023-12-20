@@ -102,10 +102,10 @@ def cli_batch_lnl_generation(
 
 @click.command("combine_lnl_data")
 @click.argument('outdir', default='out_mcz_grids', type=str)
-@click.option('--fname', default='combined_lnl_data.csv', type=str)
+@click.option('--fname', default='', type=str)
 def cli_combine_lnl_data(
         outdir: str = "out_mcz_grids",
-        fname: str = 'combined_lnl_data.csv',
+        fname: str = '',
 ) -> None:
     """
     Combine the likelihood data in 'OUTDIR/*_lnl.csv' -> FNAME
