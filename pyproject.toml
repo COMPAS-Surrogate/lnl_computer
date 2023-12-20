@@ -42,7 +42,7 @@ dev = [
     "pytest-cov>=4.1.0",
     "pre-commit",
     "flake8>=5.0.4",
-    "black>=22.12.0",
+    "black==22.10.0",
     "jupyter-book",
 ]
 
