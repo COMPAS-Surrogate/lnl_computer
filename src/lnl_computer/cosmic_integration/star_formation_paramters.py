@@ -28,7 +28,20 @@ LATEX_LABELS = dict(
 )
 
 
-def get_star_formation_prior(parameters=None) -> PriorDict:
+class MyPriorDict(PriorDict):
+    @property
+    def bounds(self):
+        return np.array([[self[p].minimum, self[p].maximum] for p in self.keys()])
+
+    @property
+    def n_params(self):
+        return len(self.keys())
+
+    def sample_val(self):
+        return np.array([self[p].sample() for p in self.keys()]).reshape(1, -1)
+
+
+def get_star_formation_prior(parameters=None) -> MyPriorDict:
     if parameters is None:
         parameters = list(STAR_FORMATION_RANGES.keys())
     pri = dict()
@@ -36,11 +49,11 @@ def get_star_formation_prior(parameters=None) -> PriorDict:
         pri[p] = Uniform(
             *STAR_FORMATION_RANGES[p], name=p, latex_label=LATEX_LABELS[p]
         )
-    return PriorDict(pri)
+    return MyPriorDict(pri)
 
 
 def draw_star_formation_samples(
-    n:int=1000, parameters:List[str]=None, as_list=False, custom_ranges:Dict=None, grid:bool=False
+        n: int = 1000, parameters: List[str] = None, as_list=False, custom_ranges: Dict = None, grid: bool = False
 ) -> Union[Dict[str, np.ndarray], List[Dict]]:
     """Draw samples from the star formation parameters.
     Returns a dictionary of arrays, or a list of dictionaries if as_list is True.

@@ -183,7 +183,7 @@ class McZGrid(DetectionMatrix):
 
     @property
     def param_str(self):
-        return "_".join([f"{k}_{v:.6f}" for k, v in self.cosmological_parameters.items()])
+        return "_".join([f"{k}_{v:.10f}" for k, v in self.cosmological_parameters.items()])
 
     @property
     def label(self) -> str:
