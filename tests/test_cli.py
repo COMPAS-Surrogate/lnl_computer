@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from click.testing import CliRunner
@@ -8,6 +10,7 @@ from lnl_computer.cli.cli import cli_make_sf_table, cli_make_mock_obs, cli_batch
     cli_make_mock_obs
 from lnl_computer.observation.mock_observation import MockObservation
 
+import shutil
 
 def test_cli_make_sf_table(test_datapath, tmp_path):
     fname = f"{tmp_path}/parameter_table.csv"
@@ -35,6 +38,9 @@ def test_cli_make_mock_obs(test_datapath, tmp_path):
 
 def test_cli_batch_lnl_generation(test_datapath, tmp_path):
     # STEP 1: make a parameter table
+    tmp_path = f"{tmp_path}/lnl_generation"
+    shutil.rmtree(tmp_path, ignore_errors=True)
+    os.makedirs(tmp_path, exist_ok=True)
     sf_fname = f"{tmp_path}/parameter_table.csv"
     make_sf_table(parameters=["aSF", "dSF"], n=2, fname=sf_fname)
     sf_parm = pd.read_csv(sf_fname).to_dict("records")[0]
