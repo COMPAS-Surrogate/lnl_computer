@@ -12,6 +12,9 @@ PLOT = True
 def test_prior():
     p = get_star_formation_prior(parameters=["aSF", "dSF"])
     assert p.bounds.shape == (2, 2)
+    p = get_star_formation_prior()
+    assert p.bounds.shape == (p.n_params, 2)
+    assert p.sample_val().shape == (1, p.n_params)
 
 
 def test_sampler(tmp_path):
@@ -27,6 +30,8 @@ def test_sampler(tmp_path):
     samples_grid = pd.DataFrame(
         draw_star_formation_samples(50, parameters, grid=True)
     )
+
+    samples_all = draw_star_formation_samples(1000)
 
     if PLOT:
         import matplotlib.pyplot as plt
