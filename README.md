@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/github/COMPAS-Surrogate/lnl_computer/badge.svg)](https://coveralls.io/github/COMPAS-Surrogate/lnl_computer)
 # COMPAS Detection Likelihood computer
 
 Utils to run the COMPAS cosmic-integration code in large batches and compute the LnL given a Mc-z detection matrix.
