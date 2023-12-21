@@ -9,9 +9,9 @@ from compas_python_utils.cosmic_integration.binned_cosmic_integrator.detection_m
     DetectionMatrix,
 )
 
+from ..likelihood import ln_likelihood
 from ..logger import logger
 from .star_formation_paramters import DEFAULT_SF_PARAMETERS
-from ..likelihood import ln_likelihood
 
 
 class McZGrid(DetectionMatrix):
@@ -83,7 +83,7 @@ class McZGrid(DetectionMatrix):
     def get_bootstrapped_grid(self, i: int) -> "McZGrid":
         """Creates a new Uni using the ith bootstrapped rate matrix"""
         assert (
-                i < self.n_bootstraps
+            i < self.n_bootstraps
         ), f"i={i} is larger than the number of bootstraps {self.n_bootstraps}"
         return McZGrid(
             compas_path=self.compas_path,
@@ -100,12 +100,14 @@ class McZGrid(DetectionMatrix):
         """Calculate the number of detections in a given duration (in years)"""
         return np.nansum(self.rate_matrix) * duration
 
-    def get_lnl(self, mcz_obs: np.ndarray, duration: float = 1.0) -> Tuple[float, float]:
+    def get_lnl(
+        self, mcz_obs: np.ndarray, duration: float = 1.0
+    ) -> Tuple[float, float]:
         """Get Lnl+/-unc from the mcz_obs"""
         lnl = ln_likelihood(
             mcz_obs=mcz_obs,
             model_prob_func=self.prob_of_mcz,
-            n_model=self.n_detections(duration)
+            n_model=self.n_detections(duration),
         )
         bootstrapped_lnls = []
         for i in range(self.n_bootstraps):
@@ -125,10 +127,11 @@ class McZGrid(DetectionMatrix):
     def __repr__(self) -> str:
         return f"<mcz_grid: [{self.n_systems} systems], {self.param_str}>"
 
-
     @property
     def param_str(self):
-        return "_".join([f"{k}_{v:.10f}" for k, v in self.cosmological_parameters.items()])
+        return "_".join(
+            [f"{k}_{v:.10f}" for k, v in self.cosmological_parameters.items()]
+        )
 
     @property
     def label(self) -> str:
@@ -139,14 +142,6 @@ class McZGrid(DetectionMatrix):
         return f"{self.outdir}/{self.label}.h5"
 
     @property
-    def param_list(self) -> np.array:
-        return np.array(self.cosmological_parameters.values()).flatten()
-
-    @property
-    def param_names(self) -> List[str]:
-        return list(self.cosmological_parameters.keys())
-
-    @property
     def n_bootstraps(self) -> int:
         if self.bootstrapped_rate_matrices is None:
             return 0
@@ -154,15 +149,15 @@ class McZGrid(DetectionMatrix):
 
     @classmethod
     def generate_n_save(
-            cls,
-            compas_h5_path: str,
-            sf_sample: Dict,
-            save_plots: bool = False,
-            outdir=None,
-            fname="",
-            n_bootstraps=0,
+        cls,
+        compas_h5_path: str,
+        sf_sample: Dict,
+        save_plots: bool = False,
+        outdir=None,
+        fname="",
+        n_bootstraps=0,
     ) -> "McZGrid":
-        """ Generate a detection matrix for a given set of star formation parameters
+        """Generate a detection matrix for a given set of star formation parameters
         :param compas_h5_path:
         :param sf_sample: Dict of star formation parameters
         :param save_plots: Bool to save plots
@@ -199,7 +194,9 @@ class McZGrid(DetectionMatrix):
         return mcz_grid
 
     @classmethod
-    def lnl(cls, mcz_obs: np.ndarray, duration=1, *args) -> Tuple[float, float]:
+    def lnl(
+        cls, sf_sample: Dict, mcz_obs: np.ndarray, duration=1, **kwargs
+    ) -> Tuple[float, float]:
         """Return the LnL(sf_sample|mcz_obs)+/-unc
 
         Also saves the Lnl+/-unc and params to a csv file
@@ -209,15 +206,19 @@ class McZGrid(DetectionMatrix):
         :param args: Arguments to pass to generate_n_save
         :return: The LnL value
         """
-        model = cls.generate_n_save(*args)
+        model = cls.generate_n_save(**kwargs, sf_sample=sf_sample)
         lnl, unc = model.get_lnl(mcz_obs=mcz_obs, duration=duration)
-        # save lnl data to csv
-        df = pd.DataFrame(dict(
-            lnl=lnl,
-            unc=unc,
-            **model.cosmological_parameters,
-        ), index=[0])
-
-        fname = args[-2].replace(".h5", "_lnl.csv") if args[-2] != "" else f"{model.outdir}/{model.label}_lnl.csv"
-        df.to_csv(fname, index=False)
+        _save_lnl_dict_to_csv(lnl, unc, model, kwargs.get("fname", ""))
         return lnl, unc
+
+
+def _save_lnl_dict_to_csv(lnl, unc, model: McZGrid, fname: str) -> None:
+    """Save the lnl and unc to a csv file"""
+    data = dict(lnl=lnl, unc=unc, **model.cosmological_parameters)
+    # save lnl data to csv
+    lnl_fname = f"{model.outdir}/{model.label}_lnl.csv"
+    if fname != "":
+        lnl_fname = fname.replace(".h5", "_lnl.csv")
+
+    df = pd.DataFrame(data, index=[0])
+    df.to_csv(lnl_fname, index=False)

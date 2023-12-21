@@ -4,10 +4,11 @@ import pandas as pd
 
 from lnl_computer.cosmic_integration.star_formation_paramters import (
     draw_star_formation_samples,
+    get_star_formation_prior,
 )
-from lnl_computer.cosmic_integration.star_formation_paramters import get_star_formation_prior
 
 PLOT = True
+
 
 def test_prior():
     p = get_star_formation_prior(parameters=["aSF", "dSF"])

@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 
 from ..cosmic_integration.mcz_grid import McZGrid
-from .observation import Observation
 from ..logger import logger
+from .observation import Observation
 
 
 class MockObservation(Observation):
@@ -23,10 +23,10 @@ class MockObservation(Observation):
 
     @classmethod
     def from_mcz_grid(
-            cls,
-            mcz_grid: McZGrid,
-            duration: float = 1.0,
-            n_obs: int = None,
+        cls,
+        mcz_grid: McZGrid,
+        duration: float = 1.0,
+        n_obs: int = None,
     ) -> "MockObservation":
         """Make a fake detection matrix with the same shape as the mcz_grid"""
 
@@ -82,9 +82,9 @@ class MockObservation(Observation):
 
 
 def _sample_events_from_mcz_grid(
-        mcz_grid: McZGrid,
-        duration: float = 1.0,
-        n_obs: float = None,
+    mcz_grid: McZGrid,
+    duration: float = 1.0,
+    n_obs: float = None,
 ) -> np.ndarray:
     """
     Sample Mc-Z pairs from the mcz_grid.
@@ -118,17 +118,13 @@ def _mcz_to_df(mcz_grid) -> pd.DataFrame:
     z, mc = mcz_grid.redshift_bins, mcz_grid.chirp_mass_bins
     rate = mcz_grid.rate_matrix.ravel()
     zz, mcc = np.meshgrid(z, mc)
-    df = pd.DataFrame(
-        {"z": zz.ravel(), "mc": mcc.ravel(), "rate": rate}
-    )
+    df = pd.DataFrame({"z": zz.ravel(), "mc": mcc.ravel(), "rate": rate})
     df = df.sort_values("rate", ascending=False)
 
     # drop nans and log the number of rows dropped
     n_nans = df.isna().any(axis=1).sum()
     if n_nans > 0:
-        logger.warning(
-            f"Dropping {n_nans}/{len(df)} rows with nan values"
-        )
+        logger.warning(f"Dropping {n_nans}/{len(df)} rows with nan values")
         df = df.dropna()
 
     # check no nan in dataframe

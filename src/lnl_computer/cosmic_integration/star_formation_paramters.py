@@ -31,7 +31,9 @@ LATEX_LABELS = dict(
 class MyPriorDict(PriorDict):
     @property
     def bounds(self):
-        return np.array([[self[p].minimum, self[p].maximum] for p in self.keys()])
+        return np.array(
+            [[self[p].minimum, self[p].maximum] for p in self.keys()]
+        )
 
     @property
     def n_params(self):
@@ -53,7 +55,11 @@ def get_star_formation_prior(parameters=None) -> MyPriorDict:
 
 
 def draw_star_formation_samples(
-        n: int = 1000, parameters: List[str] = None, as_list=False, custom_ranges: Dict = None, grid: bool = False
+    n: int = 1000,
+    parameters: List[str] = None,
+    as_list=False,
+    custom_ranges: Dict = None,
+    grid: bool = False,
 ) -> Union[Dict[str, np.ndarray], List[Dict]]:
     """Draw samples from the star formation parameters.
     Returns a dictionary of arrays, or a list of dictionaries if as_list is True.

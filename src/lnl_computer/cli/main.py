@@ -1,45 +1,29 @@
 import os
-
-import pandas as pd
-from glob import glob
-from typing import Dict, Union
-from tqdm.contrib.concurrent import process_map
-import click
-from multiprocessing import cpu_count
-
-from ..cosmic_integration.mcz_grid import McZGrid
-from ..observation.observation import Observation
-from ..observation.mock_observation import MockObservation
-from ..logger import logger
-
-
-
-from typing import Dict, Union
-import click
-
-from ..cosmic_integration.mcz_grid import McZGrid
-from ..observation.mock_observation import MockObservation
-from ..logger import logger
-
-import os
+import uuid
 from argparse import ArgumentParser
+from functools import partial
+from glob import glob
+from multiprocessing import cpu_count
 from typing import Dict, List, Tuple, Union
 
-import pandas as pd
-
-from ..logger import logger
-from ..cosmic_integration.star_formation_paramters import draw_star_formation_samples
 import click
-import uuid
+import pandas as pd
+from tqdm.contrib.concurrent import process_map
 
-
+from ..cosmic_integration.mcz_grid import McZGrid
+from ..cosmic_integration.star_formation_paramters import (
+    draw_star_formation_samples,
+)
+from ..logger import logger
+from ..observation.mock_observation import MockObservation
+from ..observation.observation import Observation
 
 
 def make_sf_table(
-        parameters: List[str] = None,
-        n: int = 50,
-        grid_parameterspace=False,
-        fname: str = "parameter_table.csv",
+    parameters: List[str] = None,
+    n: int = 50,
+    grid_parameterspace=False,
+    fname: str = "parameter_table.csv",
 ) -> pd.DataFrame:
     """Parses the table of parameters to generate mcz-grids for.
 
@@ -68,19 +52,17 @@ def make_sf_table(
     logger.info(f"Parameter table saved to {fname}")
 
 
-
-
 def make_mock_obs(
-        compas_h5_path: str,
-        sf_sample: Union[Dict, str],
-        fname: str = "mock_observation.npz",
+    compas_h5_path: str,
+    sf_sample: Union[Dict, str],
+    fname: str = "mock_observation.npz",
 ) -> "MockObservation":
-    """ Generate a detection matrix for a given set of star formation parameters
+    """Generate a detection matrix for a given set of star formation parameters
     :param compas_h5_path:
     :param sf_sample: Dict of star formation parameters, or a string like "k1:v1 k2:v2"->{"k1":float(v1)", "k2":float(v2)}
     :param fname: mcgrid-fname
     """
-    assert fname.endswith(".npz"), ("fname must end with .npz")
+    assert fname.endswith(".npz"), "fname must end with .npz"
     if isinstance(sf_sample, str):
         sf_sample = dict([s.split(":") for s in sf_sample.split(" ")])
         sf_sample = {k: float(v) for k, v in sf_sample.items()}
@@ -95,14 +77,13 @@ def make_mock_obs(
     logger.info(f"Mock observation saved to {fname}")
 
 
-
 def batch_lnl_generation(
-        mcz_obs: Union[Observation, str],
-        compas_h5_path: str,
-        parameter_table: Union[pd.DataFrame, str],
-        n_bootstraps: int = 100,
-        save_images: bool = True,
-        outdir: str = "out_mcz_grids",
+    mcz_obs: Union[Observation, str],
+    compas_h5_path: str,
+    parameter_table: Union[pd.DataFrame, str],
+    n_bootstraps: int = 100,
+    save_images: bool = True,
+    outdir: str = "out_mcz_grids",
 ) -> None:
     """
     Generate a set of COMPAS Mc-Z detection rate matrices
@@ -127,26 +108,28 @@ def batch_lnl_generation(
         f"Generating mcz-grids (with {n_proc} threads for {n} samples of {param_names})"
     )
     # setting up args for process_map
-    args = dict(
-        mcz_obs=[mcz_obs] * n,
-        duration=[1] * n,
-        compas_h5_path=[compas_h5_path] * n,
-        sf_params=parameter_table.to_dict("records"),
-        save_plots=[save_images] * n,
-        outdir=[outdir] * n,
-        fname=["" for _ in range(n)],
-        n_bootstraps=[n_bootstraps] * n,
-    ).values()
+    _lnl_func = partial(
+        McZGrid.lnl,
+        mcz_obs=mcz_obs,
+        duration=1,
+        compas_h5_path=compas_h5_path,
+        save_plots=save_images,
+        outdir=outdir,
+        n_bootstraps=n_bootstraps,
+        fname="",
+    )
     process_map(
-        McZGrid.lnl, *args, max_workers=n_proc, chunksize=n_proc
+        _lnl_func,
+        parameter_table.to_dict("records"),
+        max_workers=n_proc,
+        chunksize=n_proc,
     )
     combine_lnl_data(outdir=outdir)
 
 
-
 def combine_lnl_data(
-        outdir: str = "out_mcz_grids",
-        fname: str = '',
+    outdir: str = "out_mcz_grids",
+    fname: str = "",
 ) -> None:
     """
     Combine the likelihood data from the generated mcz-grids into a single file
@@ -156,8 +139,8 @@ def combine_lnl_data(
     :param outdir: output directory for mcz-grids
     :return: None
     """
-    files = glob(f'{outdir}/*_lnl.csv')
-    if fname == '':
+    files = glob(f"{outdir}/*_lnl.csv")
+    if fname == "":
         fname = f"{outdir}/combined_lnl_data.csv"
     logger.info(f"Compiling {len(files)} LnL values to {outdir}/{fname}")
     df = pd.concat([pd.read_csv(f) for f in files])
