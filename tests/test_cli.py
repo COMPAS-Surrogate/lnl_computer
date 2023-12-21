@@ -15,10 +15,11 @@ from lnl_computer.cli.cli import (
     make_mock_obs,
     make_sf_table,
 )
+from lnl_computer.mock_data import MockData
 from lnl_computer.observation.mock_observation import MockObservation
 
 
-def test_cli_make_sf_table(test_datapath, tmp_path):
+def test_cli_make_sf_table(tmp_path):
     fname = f"{tmp_path}/parameter_table.csv"
     runner = CliRunner()
     n = 2**5
@@ -34,12 +35,13 @@ def test_cli_make_sf_table(test_datapath, tmp_path):
     assert set(df.columns) == set(params)
 
 
-def test_cli_make_mock_obs(test_datapath, tmp_path):
+def test_cli_make_mock_obs(mock_data: MockData, tmp_path):
     fname = f"{tmp_path}/mock_obs.npz"
     runner = CliRunner()
     asf = 0.01
     out = runner.invoke(
-        cli_make_mock_obs, [test_datapath, f"aSF:{asf}", "--fname", fname]
+        cli_make_mock_obs,
+        [mock_data.compas_filename, f"aSF:{asf}", "--fname", fname],
     )
     print(out.stdout)
     assert out.exit_code == 0
@@ -47,7 +49,7 @@ def test_cli_make_mock_obs(test_datapath, tmp_path):
     assert obs.mcz_grid.cosmological_parameters["aSF"] == asf
 
 
-def test_cli_batch_lnl_generation(test_datapath, tmp_path):
+def test_cli_batch_lnl_generation(mock_data, tmp_path):
     # STEP 1: make a parameter table
     tmp_path = f"{tmp_path}/lnl_generation"
     shutil.rmtree(tmp_path, ignore_errors=True)
@@ -58,7 +60,7 @@ def test_cli_batch_lnl_generation(test_datapath, tmp_path):
 
     # STEP 2: generate mock observations
     mock_fname = f"{tmp_path}/mock_obs.npz"
-    make_mock_obs(test_datapath, sf_parm, fname=mock_fname)
+    make_mock_obs(mock_data.compas_filename, sf_parm, fname=mock_fname)
 
     # STEP 3: generate lnl data
     runner = CliRunner()
@@ -66,7 +68,7 @@ def test_cli_batch_lnl_generation(test_datapath, tmp_path):
         cli_batch_lnl_generation,
         [
             mock_fname,
-            test_datapath,
+            mock_data.compas_filename,
             sf_fname,
             "--n_bootstraps",
             1,

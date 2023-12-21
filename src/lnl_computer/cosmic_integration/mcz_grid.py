@@ -151,7 +151,7 @@ class McZGrid(DetectionMatrix):
     def generate_n_save(
         cls,
         compas_h5_path: str,
-        sf_sample: Dict,
+        sf_sample: Dict = None,
         save_plots: bool = False,
         outdir=None,
         fname="",
@@ -171,6 +171,9 @@ class McZGrid(DetectionMatrix):
             return cls.from_h5(fname)
         if fname != "" and not fname.endswith(".h5"):
             logger.error(f"fname must end with .h5, got {fname}")
+
+        if sf_sample is None:
+            sf_sample = DEFAULT_SF_PARAMETERS
 
         mcz_grid = cls.from_compas_output(
             compas_path=compas_h5_path,
