@@ -56,7 +56,7 @@ class MockObservation(Observation):
         return fig
 
     def __repr__(self) -> str:
-        return f"MockObservation({self.mcz_grid})"
+        return f"<MockObservation({self.n_events} events)>"
 
     @property
     def label(self) -> str:

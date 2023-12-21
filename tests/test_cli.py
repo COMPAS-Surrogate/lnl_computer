@@ -6,12 +6,10 @@ import pytest
 from click.testing import CliRunner
 
 from lnl_computer.cli.cli import (
-    batch_lnl_generation,
     cli_batch_lnl_generation,
     cli_combine_lnl_data,
     cli_make_mock_obs,
     cli_make_sf_table,
-    combine_lnl_data,
     make_mock_obs,
     make_sf_table,
 )

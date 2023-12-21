@@ -7,6 +7,7 @@ from multiprocessing import cpu_count
 from typing import Dict, List, Tuple, Union
 
 import click
+import numpy as np
 import pandas as pd
 from tqdm.contrib.concurrent import process_map
 
@@ -96,7 +97,7 @@ def batch_lnl_generation(
     """
     os.makedirs(outdir, exist_ok=True)
     if isinstance(mcz_obs, str):
-        mcz_obs = MockObservation.from_npz(mcz_obs).mcz
+        mcz_obs = MockObservation.from_npz(mcz_obs)
     if isinstance(parameter_table, str):
         parameter_table = pd.read_csv(parameter_table)
     param_names = parameter_table.columns.tolist()
@@ -104,12 +105,8 @@ def batch_lnl_generation(
     n_proc = _get_n_workers()
     if n < n_proc:
         n_proc = n
-    logger.info(
-        f"Generating mcz-grids (with {n_proc} threads for {n} samples of {param_names})"
-    )
-    # setting up args for process_map
-    _lnl_func = partial(
-        McZGrid.lnl,
+
+    kwargs = dict(
         mcz_obs=mcz_obs,
         duration=1,
         compas_h5_path=compas_h5_path,
@@ -118,6 +115,12 @@ def batch_lnl_generation(
         n_bootstraps=n_bootstraps,
         fname="",
     )
+    logger.info(
+        f"Generating mcz-grids (with {n_proc} threads for {n} samples of {param_names}) [{kwargs}]"
+    )
+    kwargs["mcz_obs"] = mcz_obs.mcz
+    # setting up args for process_map
+    _lnl_func = partial(McZGrid.lnl, **kwargs)
     process_map(
         _lnl_func,
         parameter_table.to_dict("records"),
