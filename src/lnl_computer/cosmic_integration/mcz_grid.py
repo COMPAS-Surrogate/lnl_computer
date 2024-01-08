@@ -175,16 +175,19 @@ class McZGrid(DetectionMatrix):
         if sf_sample is None:
             sf_sample = DEFAULT_SF_PARAMETERS
 
-        mcz_grid = cls.from_compas_output(
-            compas_path=compas_h5_path,
-            cosmological_parameters=dict(
+        params = dict(
                 aSF=sf_sample.get("aSF", DEFAULT_SF_PARAMETERS["aSF"]),
                 dSF=sf_sample.get("dSF", DEFAULT_SF_PARAMETERS["dSF"]),
                 mu_z=sf_sample.get("muz", DEFAULT_SF_PARAMETERS["muz"]),
                 sigma_0=sf_sample.get(
                     "sigma0", DEFAULT_SF_PARAMETERS["sigma0"]
-                ),
-            ),
+                )
+        )
+        logger.info(f"Generating McZ grid: {params}")
+
+        mcz_grid = cls.from_compas_output(
+            compas_path=compas_h5_path,
+            cosmological_parameters=params,
             max_detectable_redshift=0.6,
             redshift_bins=np.linspace(0, 0.6, 100),
             chirp_mass_bins=np.linspace(3, 40, 50),
