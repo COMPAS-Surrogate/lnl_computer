@@ -1,6 +1,7 @@
 """Mocking utilities for testing (mocks COMPAS populations, and MCZ obserations)."""
 import os
 from typing import Dict
+import json
 
 from compas_python_utils.cosmic_integration.binned_cosmic_integrator.bbh_population import (
     generate_mock_bbh_population_file,
@@ -36,7 +37,7 @@ class MockData(object):
 
     @classmethod
     def generate_mock_datasets(
-        cls, outdir: str, sf_params: Dict[str, float] = None
+            cls, outdir: str, sf_params: Dict[str, float] = None
     ):
         self = cls(outdir)
         if not os.path.exists(self.compas_filename):
@@ -61,3 +62,34 @@ class MockData(object):
     @property
     def observations(self) -> MockObservation:
         return MockObservation.from_npz(self.observations_filename)
+
+    @property
+    def truth(self)->Dict:
+        return _get_true_params(self)
+
+
+def _get_true_params(mock_data: MockData):
+    fn = f'{mock_data.outdir}/truth.json'
+    if os.path.exists(fn):
+        with open(fn, 'r') as f:
+            return json.load(f)
+    else:
+        grid = mock_data.mcz_grid
+        cosmo_params = grid.cosmological_parameters
+        true_params = dict(
+            aSF=cosmo_params['aSF'],
+            dSF=cosmo_params['dSF'],
+            sigma0=cosmo_params['sigma_0'],
+            muz=cosmo_params['mu_z'],
+        )
+        lnl = grid.lnl(
+            mcz_obs=mock_data.observations.mcz,
+            duration=1,
+            compas_h5_path=mock_data.compas_filename,
+            sf_sample=true_params,
+            n_bootstraps=0,
+        )[0] * -1
+        true_params['lnl'] = lnl
+        with open(fn, 'w') as f:
+            json.dump(true_params, f)
+        return true_params
