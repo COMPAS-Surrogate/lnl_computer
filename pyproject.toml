@@ -13,7 +13,7 @@ requires-python = ">=3.8"
 description = "COMPAS detection Likelihood computer"
 readme = "README.md"
 authors = [
-    {name = "Avi Vajpeyi", email = "avi.vajpeyi@gmail.com" },
+    {name = "Avi Vajpeyi", email = "avi.fvajpeyi@gmail.com" },
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -24,15 +24,11 @@ classifiers = [
 ]
 dependencies = [
     "arviz",
-    "spectral",
-    "scikit-fda",
     "matplotlib",
     "imageio",
     "pygifsicle",
     "bilby",
-    "statsmodels",
     "loguru",
-    "astropy",
     "compas_python_utils@git+https://github.com/TeamCOMPAS/COMPAS.git"
 ]
 
