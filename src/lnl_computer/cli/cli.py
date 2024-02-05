@@ -61,11 +61,20 @@ def cli_make_sf_table(
     )
 
 
+DEFAULT_SF_PARAMETERS = dict(
+    aSF=0.01,
+    bSF=2.77,
+    cSF=2.9,
+    dSF=4.7,
+    muz=-0.23,
+    sigma0=0.39,
+)
+
 @click.command(name="make_mock_obs")
 @click.argument("compas_h5_path", type=str)
 @click.option(
     "--sf_sample", type=str, show_default=True,
-    default="aSF:0.01 dSF:0.01 muz:0.01 sigma0:0.01",
+    default="aSF:0.01 dSF:4.7 muz:-0.23 sigma0:0.39",
     help="Star formation parameters"
 )
 @click.option(
@@ -74,7 +83,7 @@ def cli_make_sf_table(
 )
 def cli_make_mock_obs(
         compas_h5_path: str,
-        sf_sample: Union[Dict, str] = dict(),
+        sf_sample: Union[Dict, str],
         fname: str = "mock_observation.npz",
 ) -> "MockObservation":
     """Generate a set of 'mock' observations for the sf-sample and compas output file (COMPAS_H5_PATH). """

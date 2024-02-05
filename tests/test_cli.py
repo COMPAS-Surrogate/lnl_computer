@@ -39,7 +39,7 @@ def test_cli_make_mock_obs(mock_data: MockData, tmp_path):
     asf = 0.01
     out = runner.invoke(
         cli_make_mock_obs,
-        [mock_data.compas_filename, f"aSF:{asf}", "--fname", fname],
+        [mock_data.compas_filename, "--sf_sample", f"aSF:{asf}", "--fname", fname],
     )
     print(out.stdout)
     assert out.exit_code == 0
@@ -70,7 +70,7 @@ def test_cli_batch_lnl_generation(mock_data, tmp_path):
             sf_fname,
             "--n_bootstraps",
             1,
-            "--no_save_images",
+            "--no_plots",
             "--outdir",
             tmp_path,
         ],
