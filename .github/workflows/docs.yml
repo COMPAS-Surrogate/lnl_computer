@@ -28,13 +28,13 @@ jobs:
      # Build the book
      - name: Build the book
        run: |
-         cd docs
-         jupyter-book build ../README.md
-         cd ..
+         cp README.md docs/
+         jupyter-book build docs
+         rm docs/README.md
 
      # Push the book's HTML to github-pages
      - name: GitHub Pages action
        uses: peaceiris/actions-gh-pages@v3.9.3
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
-         publish_dir:  ./docs/_build/_page/README/html/
+         publish_dir: ./docs/_build/html
