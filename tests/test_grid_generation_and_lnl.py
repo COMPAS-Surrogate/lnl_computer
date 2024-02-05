@@ -1,15 +1,9 @@
 import os
-import unittest
-from glob import glob
-
-import matplotlib.pyplot as plt
 import numpy as np
 
 from lnl_computer.cosmic_integration.mcz_grid import McZGrid
 from lnl_computer.mock_data import MockData
 from lnl_computer.observation.mock_observation import MockObservation
-
-# from lnl_computer.plotting.gif_generator import
 
 PLOT = False
 
@@ -30,7 +24,6 @@ def test_mcz_grid_gen_n_save(mock_data: MockData, tmp_path):
 
 
 def test_mcz_grid_generation_skip(mock_data: MockData, caplog, tmp_path):
-
     # TRY TO RE-GENERATE (but will be skipped)
     McZGrid.generate_n_save(
         mock_data.compas_filename,
