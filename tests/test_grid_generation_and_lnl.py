@@ -1,11 +1,11 @@
 import os
 
 import numpy as np
+import pytest
 
 from lnl_computer.cosmic_integration.mcz_grid import McZGrid
 from lnl_computer.mock_data import MockData
 from lnl_computer.observation.mock_observation import MockObservation
-import pytest
 
 PLOT = False
 
@@ -14,7 +14,7 @@ def test_mcz_grid_gen_n_save(mock_data: MockData, tmp_path):
     # GENERATE AND SAVE GRID
     grd = McZGrid.from_compas_output(
         mock_data.compas_filename,
-        cosmological_parameters=dict(aSF=0.01, dSF=4.70, muz=-0.23),
+        cosmological_parameters=dict(aSF=0.01, dSF=4.70, mu_z=-0.23),
         n_bootstrapped_matrices=2,
         chirp_mass_bins=np.linspace(3, 40, 50),
         redshift_bins=np.linspace(0, 0.6, 100),
@@ -66,7 +66,7 @@ def test_lnl(mock_data: MockData):
 
 
 @pytest.mark.skip(reason="Takes too long")
-def test_lnl_nan(mock_data: MockData, tmp_path:str):
+def test_lnl_nan(mock_data: MockData, tmp_path: str):
     # ensure not getting a nan!
     lnl, unc = McZGrid.lnl(
         mcz_obs=mock_data.observations.mcz,
@@ -75,7 +75,7 @@ def test_lnl_nan(mock_data: MockData, tmp_path:str):
         sf_sample=dict(aSF=0.01, dSF=4.70, mu_z=-0.01, sigma0=0.0),
         n_bootstraps=0,
         save_plots=True,
-        outdir=f"{tmp_path}/nan_lnl"
+        outdir=f"{tmp_path}/nan_lnl",
     )
     assert not np.isnan(lnl)
     assert np.isnan(unc)
