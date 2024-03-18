@@ -5,6 +5,7 @@ import numpy as np
 from lnl_computer.cosmic_integration.mcz_grid import McZGrid
 from lnl_computer.mock_data import MockData
 from lnl_computer.observation.mock_observation import MockObservation
+import pytest
 
 PLOT = False
 
@@ -57,8 +58,24 @@ def test_lnl(mock_data: MockData):
         mcz_obs=mock_data.observations.mcz,
         duration=1,
         compas_h5_path=mock_data.compas_filename,
-        sf_sample=dict(aSF=0.01, dSF=4.70, mu_z=-0.23, sigma_z=0.0),
+        sf_sample=dict(aSF=0.01, dSF=4.70, mu_z=-0.23),
         n_bootstraps=0,
     )
     assert lnl > -np.inf
+    assert np.isnan(unc)
+
+
+@pytest.mark.skip(reason="Takes too long")
+def test_lnl_nan(mock_data: MockData, tmp_path:str):
+    # ensure not getting a nan!
+    lnl, unc = McZGrid.lnl(
+        mcz_obs=mock_data.observations.mcz,
+        duration=1,
+        compas_h5_path=mock_data.compas_filename,
+        sf_sample=dict(aSF=0.01, dSF=4.70, mu_z=-0.01, sigma0=0.0),
+        n_bootstraps=0,
+        save_plots=True,
+        outdir=f"{tmp_path}/nan_lnl"
+    )
+    assert not np.isnan(lnl)
     assert np.isnan(unc)

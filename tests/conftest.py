@@ -16,7 +16,7 @@ def mock_data() -> MockData:
 
 
 @pytest.fixture
-def tmp_path():
+def tmp_path() -> str:
     """Temporary directory."""
     pth = os.path.join(HERE, "out_tmp")
     os.makedirs(pth, exist_ok=True)

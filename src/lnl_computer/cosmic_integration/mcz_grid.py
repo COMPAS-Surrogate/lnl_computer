@@ -78,6 +78,8 @@ class McZGrid(DetectionMatrix):
 
     def prob_of_mcz(self, mc: float, z: float, duration: float = 1.0) -> float:
         mc_bin, z_bin = self.get_matrix_bin_idx(mc, z)
+        if self.n_detections(duration) == 0:
+            return 0
         return self.rate_matrix[mc_bin, z_bin] / self.n_detections(duration)
 
     def get_bootstrapped_grid(self, i: int) -> "McZGrid":
@@ -210,6 +212,8 @@ class McZGrid(DetectionMatrix):
         :param args: Arguments to pass to generate_n_save
         :return: The LnL value
         """
+        if "outdir" in kwargs:
+            os.makedirs(kwargs["outdir"], exist_ok=True)
         model = cls.generate_n_save(**kwargs, sf_sample=sf_sample)
         lnl, unc = model.get_lnl(mcz_obs=mcz_obs, duration=duration)
         _save_lnl_dict_to_csv(lnl, unc, model, kwargs.get("fname", ""))
