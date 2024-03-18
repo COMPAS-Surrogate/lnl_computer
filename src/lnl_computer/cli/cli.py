@@ -22,7 +22,7 @@ from .main import (
     "-p",
     type=str,
     multiple=True,
-    default=["aSF", "dSF", "mu_z", "sigma_z"],
+    default=["aSF", "dSF", "muz", "sigma0"],
     help="List of parameters to generate mcz-grids for",
 )
 @click.option(
@@ -47,10 +47,10 @@ from .main import (
     help="Output filename (must be a .csv)",
 )
 def cli_make_sf_table(
-        parameters,
-        n,
-        grid_parameterspace,
-        fname,
+    parameters,
+    n,
+    grid_parameterspace,
+    fname,
 ) -> None:
     """Parses the table of parameters to generate mcz-grids for."""
     make_sf_table(
@@ -70,35 +70,46 @@ DEFAULT_SF_PARAMETERS = dict(
     sigma0=0.39,
 )
 
+
 @click.command(name="make_mock_obs")
 @click.argument("compas_h5_path", type=str)
 @click.option(
-    "--sf_sample", type=str, show_default=True,
+    "--sf_sample",
+    type=str,
+    show_default=True,
     default="aSF:0.01 dSF:4.7 muz:-0.23 sigma0:0.39",
-    help="Star formation parameters"
+    help="Star formation parameters",
 )
 @click.option(
-    "--fname", type=str, default="mock_observation.npz",
+    "--fname",
+    type=str,
+    default="mock_observation.npz",
     help="Output filename (must be a .npz)",
 )
 def cli_make_mock_obs(
-        compas_h5_path: str,
-        sf_sample: Union[Dict, str],
-        fname: str = "mock_observation.npz",
+    compas_h5_path: str,
+    sf_sample: Union[Dict, str],
+    fname: str = "mock_observation.npz",
 ) -> "MockObservation":
-    """Generate a set of 'mock' observations for the sf-sample and compas output file (COMPAS_H5_PATH). """
+    """Generate a set of 'mock' observations for the sf-sample and compas output file (COMPAS_H5_PATH)."""
     return make_mock_obs(compas_h5_path, sf_sample, fname=fname)
 
 
 @click.command(name="batch_lnl_generation")
 @click.argument("mcz_obs", type=click.Path(exists=True))
-@click.argument("compas_h5_path", type=str, )
-@click.argument("parameter_table", type=click.Path(exists=True, dir_okay=False))
+@click.argument(
+    "compas_h5_path",
+    type=str,
+)
+@click.argument(
+    "parameter_table", type=click.Path(exists=True, dir_okay=False)
+)
 @click.option(
     "--n_bootstraps",
     default=100,
     help="Number of bootstraps to generate for each parameter set (used for error estimation)",
-    type=int, show_default=True,
+    type=int,
+    show_default=True,
 )
 @click.option(
     "--plots/--no_plots",
@@ -111,15 +122,16 @@ def cli_make_mock_obs(
     "--outdir",
     default="out_mcz_grids",
     help="Outdir for mcz-grids",
-    type=str, show_default=True,
+    type=str,
+    show_default=True,
 )
 def cli_batch_lnl_generation(
-        mcz_obs: str,
-        compas_h5_path: str,
-        parameter_table: Union[pd.DataFrame, str],
-        n_bootstraps: int = 100,
-        plots: bool = True,
-        outdir: str = "out_mcz_grids",
+    mcz_obs: str,
+    compas_h5_path: str,
+    parameter_table: Union[pd.DataFrame, str],
+    n_bootstraps: int = 100,
+    plots: bool = True,
+    outdir: str = "out_mcz_grids",
 ) -> None:
     """
     Given observations (MCZ_OBS, npz-file), COMPAS output (COMPAS_H5_PATH, h5 file),
@@ -139,10 +151,12 @@ def cli_batch_lnl_generation(
 
 @click.command("combine_lnl_data")
 @click.argument("outdir", default="out_mcz_grids", type=str)
-@click.option("--fname", default="", type=str, help="Output filename (must be a .csv)")
+@click.option(
+    "--fname", default="", type=str, help="Output filename (must be a .csv)"
+)
 def cli_combine_lnl_data(
-        outdir: str = "out_mcz_grids",
-        fname: str = "",
+    outdir: str = "out_mcz_grids",
+    fname: str = "",
 ) -> None:
     """
     Combine the likelihood data in 'OUTDIR/*_lnl.csv' -> FNAME
@@ -153,7 +167,12 @@ def cli_combine_lnl_data(
 
 
 @click.command("mock_compas_output")
-@click.option("--fname", type=str, default="mock_compas_output.h5", help="Output filename (must be a .h5)")
+@click.option(
+    "--fname",
+    type=str,
+    default="mock_compas_output.h5",
+    help="Output filename (must be a .h5)",
+)
 def cli_make_mock_compas_output(fname: str):
     """Generate a mock COMPAS output file at FNAME"""
     os.makedirs(os.path.dirname(fname), exist_ok=True)

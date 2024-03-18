@@ -1,4 +1,5 @@
 import os
+
 import numpy as np
 
 from lnl_computer.cosmic_integration.mcz_grid import McZGrid
@@ -12,9 +13,7 @@ def test_mcz_grid_gen_n_save(mock_data: MockData, tmp_path):
     # GENERATE AND SAVE GRID
     grd = McZGrid.from_compas_output(
         mock_data.compas_filename,
-        cosmological_parameters=dict(
-            aSF=0.01, dSF=4.70, mu_z=-0.23, sigma_z=0.0
-        ),
+        cosmological_parameters=dict(aSF=0.01, dSF=4.70, muz=-0.23),
         n_bootstrapped_matrices=2,
         chirp_mass_bins=np.linspace(3, 40, 50),
         redshift_bins=np.linspace(0, 0.6, 100),
@@ -27,7 +26,7 @@ def test_mcz_grid_generation_skip(mock_data: MockData, caplog, tmp_path):
     # TRY TO RE-GENERATE (but will be skipped)
     McZGrid.generate_n_save(
         mock_data.compas_filename,
-        dict(aSF=0.01, dSF=4.70, mu_z=-0.23, sigma_z=0.0),
+        dict(aSF=0.01, dSF=4.70, muz=-0.23, sigma0=0.0),
         n_bootstraps=2,
         outdir=tmp_path,
         fname=mock_data.mcz_grid_filename,

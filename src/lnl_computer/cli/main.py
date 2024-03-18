@@ -37,7 +37,7 @@ def make_sf_table(
     :return: pandas dataframe containing cosmic integration parameters
     """
     logger.info(f"Generating {n} samples of {parameters}")
-    parameters = parameters or ["aSF", "dSF", "mu_z", "sigma_z"]
+    parameters = parameters or ["aSF", "dSF", "muz", "sigma0"]
     parameter_table = pd.DataFrame(
         draw_star_formation_samples(
             n,

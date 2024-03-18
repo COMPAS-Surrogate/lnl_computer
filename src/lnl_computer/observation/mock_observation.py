@@ -40,6 +40,11 @@ class MockObservation(Observation):
 
         return MockObservation(rate2d=rate2d, mcz=event_mcz, mcz_grid=mcz_grid)
 
+    @classmethod
+    def from_compas_h5(cls, compas_h5_fname: str):
+        mcz_grid = McZGrid.from_compas_output(compas_h5_fname)
+        return cls.from_mcz_grid(mcz_grid)
+
     def plot(self) -> plt.Figure:
         fig = self.mcz_grid.plot()
         axes = fig.get_axes()

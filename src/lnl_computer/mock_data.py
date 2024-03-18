@@ -84,8 +84,8 @@ def _get_true_params(mock_data: MockData):
         true_params = dict(
             aSF=cosmo_params["aSF"],
             dSF=cosmo_params["dSF"],
-            sigma0=cosmo_params["sigma_0"],
-            muz=cosmo_params["mu_z"],
+            sigma0=cosmo_params["sigma0"],
+            muz=cosmo_params["muz"],
         )
         lnl = (
             grid.lnl(
