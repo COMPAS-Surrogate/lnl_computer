@@ -1,8 +1,7 @@
 import os
 import shutil
-from typing import Dict, List, Tuple, Union
+from typing import Dict, Tuple
 
-import h5py
 import numpy as np
 import pandas as pd
 from compas_python_utils.cosmic_integration.binned_cosmic_integrator.detection_matrix import (
@@ -176,6 +175,11 @@ class McZGrid(DetectionMatrix):
 
         if sf_sample is None:
             sf_sample = DEFAULT_SF_PARAMETERS
+
+        if "mu_z" in sf_sample:
+            sf_sample["muz"] = sf_sample.pop("mu_z")
+        if "sigma_0" in sf_sample:
+            sf_sample["sigma0"] = sf_sample.pop("sigma_0")
 
         params = dict(
             aSF=sf_sample.get("aSF", DEFAULT_SF_PARAMETERS["aSF"]),
