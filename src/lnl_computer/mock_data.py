@@ -46,7 +46,9 @@ class MockData(object):
     ):
         self = cls(outdir)
         if not os.path.exists(self.compas_filename):
-            generate_mock_bbh_population_file(filename=self.compas_filename, frac_bbh=0.05)
+            generate_mock_bbh_population_file(
+                filename=self.compas_filename, frac_bbh=0.05
+            )
 
         if not os.path.exists(self.mcz_grid_filename):
             McZGrid.generate_n_save(
