@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 from ..cosmic_integration.mcz_grid import McZGrid
+from ..cosmic_integration.star_formation_paramters import DEFAULT_DICT
 from ..logger import logger
 from .observation import Observation
 
@@ -42,7 +43,10 @@ class MockObservation(Observation):
 
     @classmethod
     def from_compas_h5(cls, compas_h5_fname: str):
-        mcz_grid = McZGrid.from_compas_output(compas_h5_fname)
+        mcz_grid = McZGrid.from_compas_output(
+            compas_h5_fname,
+            cosmological_parameters=DEFAULT_DICT,
+        )
         return cls.from_mcz_grid(mcz_grid)
 
     def plot(self) -> plt.Figure:

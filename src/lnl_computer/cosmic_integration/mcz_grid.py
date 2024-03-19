@@ -157,6 +157,7 @@ class McZGrid(DetectionMatrix):
         outdir=None,
         fname="",
         n_bootstraps=0,
+        clean=True,
     ) -> "McZGrid":
         """Generate a detection matrix for a given set of star formation parameters
         :param compas_h5_path:
@@ -167,7 +168,7 @@ class McZGrid(DetectionMatrix):
         :param n_bootstraps: N
         :return:
         """
-        if os.path.isfile(fname):
+        if os.path.isfile(fname) and not clean:
             logger.warning(f"Skipping {fname} generation as it already exists")
             return cls.from_h5(fname)
         if fname != "" and not fname.endswith(".h5"):

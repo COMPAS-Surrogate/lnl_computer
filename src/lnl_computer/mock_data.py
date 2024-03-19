@@ -86,15 +86,15 @@ def _get_true_params(mock_data: MockData):
         true_params = dict(
             aSF=cosmo_params["aSF"],
             dSF=cosmo_params["dSF"],
-            sigma0=cosmo_params["sigma0"],
-            muz=cosmo_params["muz"],
+            sigma_0=cosmo_params["sigma_0"],
+            mu_z=cosmo_params["mu_z"],
         )
         lnl = (
             grid.lnl(
                 mcz_obs=mock_data.observations.mcz,
                 duration=1,
                 compas_h5_path=mock_data.compas_filename,
-                sf_sample=true_params,
+                sf_sample=true_params.copy(),
                 n_bootstraps=0,
             )[0]
             * -1

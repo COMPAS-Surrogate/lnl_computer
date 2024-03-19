@@ -15,6 +15,9 @@ DEFAULT_SF_PARAMETERS = dict(
     muz=-0.23,
     sigma0=0.39,
 )
+DEFAULT_DICT = {
+    k: DEFAULT_SF_PARAMETERS[k] for k in ["aSF", "dSF", "mu_z", "sigma_0"]
+}
 
 STAR_FORMATION_RANGES = dict(
     mu_z=[-0.5, -0.001],  # Jeff's alpha
