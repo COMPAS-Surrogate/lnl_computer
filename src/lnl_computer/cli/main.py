@@ -56,6 +56,7 @@ def make_sf_table(
 def make_mock_obs(
     compas_h5_path: str,
     sf_sample: Union[Dict, str],
+    duration: float,
     fname: str = "mock_observation.npz",
 ) -> "MockObservation":
     """Generate a detection matrix for a given set of star formation parameters
@@ -73,7 +74,7 @@ def make_mock_obs(
         sf_sample=sf_sample,
         save_plots=False,
     )
-    obs = MockObservation.from_mcz_grid(mcz_grid)
+    obs = MockObservation.from_mcz_grid(mcz_grid, duration=duration)
     obs.save(fname)
     logger.info(f"Mock observation saved to {fname}")
 
@@ -82,6 +83,7 @@ def batch_lnl_generation(
     mcz_obs: Union[Observation, str],
     compas_h5_path: str,
     parameter_table: Union[pd.DataFrame, str],
+    duration: float = 1,
     n_bootstraps: int = 100,
     save_images: bool = True,
     outdir: str = "out_mcz_grids",
@@ -108,7 +110,7 @@ def batch_lnl_generation(
 
     kwargs = dict(
         mcz_obs=mcz_obs,
-        duration=1,
+        duration=duration,
         compas_h5_path=compas_h5_path,
         save_plots=save_images,
         outdir=outdir,

@@ -42,14 +42,16 @@ def test_load_mcz_grid_n_plot(mock_data: MockData, tmp_path):
 
 
 def test_obs_gen_n_save(mock_data: MockData, tmp_path):
-    obs = MockObservation.from_mcz_grid(mock_data.mcz_grid)
+    obs = MockObservation.from_mcz_grid(mock_data.mcz_grid, duration=1)
     obs.save(os.path.join(tmp_path, "mock_obs.npz"))
     obs = MockObservation.from_npz(os.path.join(tmp_path, "mock_obs.npz"))
     obs.plot().savefig(os.path.join(tmp_path, "mock_obs.png"))
 
 
 def test_lnl(mock_data: MockData):
-    lnl, unc = mock_data.mcz_grid.get_lnl(mock_data.observations.mcz)
+    lnl, unc = mock_data.mcz_grid.get_lnl(
+        mock_data.observations.mcz, duration=1
+    )
     assert lnl > -np.inf
     assert unc != np.nan
 
@@ -79,3 +81,10 @@ def test_lnl_nan(mock_data: MockData, tmp_path: str):
     )
     assert not np.isnan(lnl)
     assert np.isnan(unc)
+
+
+def test_duration(mock_data: MockData):
+    # ensure duration is used
+    mock_d1 = MockObservation.from_mcz_grid(mock_data.mcz_grid, duration=1)
+    mock_d2 = MockObservation.from_mcz_grid(mock_data.mcz_grid, duration=2)
+    assert mock_d1.n_events < mock_d2.n_events

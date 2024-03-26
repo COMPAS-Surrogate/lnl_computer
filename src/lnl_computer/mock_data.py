@@ -11,9 +11,13 @@ from lnl_computer.cosmic_integration.mcz_grid import McZGrid
 from lnl_computer.observation.mock_observation import MockObservation
 
 
-def generate_mock_data(outdir: str, sf_params: Dict[str, float] = None):
+def generate_mock_data(
+    outdir: str, duration: float, sf_params: Dict[str, float] = None
+):
     """Generate mock datasets for testing."""
-    return MockData.generate_mock_datasets(outdir=outdir, sf_params=sf_params)
+    return MockData.generate_mock_datasets(
+        outdir=outdir, duration=duration, sf_params=sf_params
+    )
 
 
 def load_mock_data(outdir: str):
@@ -42,7 +46,10 @@ class MockData(object):
 
     @classmethod
     def generate_mock_datasets(
-        cls, outdir: str, sf_params: Dict[str, float] = None
+        cls,
+        outdir: str,
+        duration: float,
+        sf_params: Dict[str, float] = None,
     ):
         self = cls(outdir)
         if not os.path.exists(self.compas_filename):
@@ -58,7 +65,9 @@ class MockData(object):
             )
 
         if not os.path.exists(self.observations_filename):
-            obs = MockObservation.from_mcz_grid(self.mcz_grid)
+            obs = MockObservation.from_mcz_grid(
+                self.mcz_grid, duration=duration
+            )
             obs.save(self.observations_filename)
         return self
 
@@ -92,7 +101,7 @@ def _get_true_params(mock_data: MockData):
         lnl = (
             grid.lnl(
                 mcz_obs=mock_data.observations.mcz,
-                duration=1,
+                duration=mock_data.du,
                 compas_h5_path=mock_data.compas_filename,
                 sf_sample=true_params.copy(),
                 n_bootstraps=0,

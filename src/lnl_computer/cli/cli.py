@@ -81,6 +81,13 @@ DEFAULT_SF_PARAMETERS = dict(
     help="Star formation parameters",
 )
 @click.option(
+    "--duration",
+    type=float,
+    default=1,
+    help="Duration of the observation",
+    show_default=True,
+)
+@click.option(
     "--fname",
     type=str,
     default="mock_observation.npz",
@@ -89,10 +96,13 @@ DEFAULT_SF_PARAMETERS = dict(
 def cli_make_mock_obs(
     compas_h5_path: str,
     sf_sample: Union[Dict, str],
+    duration: float,
     fname: str = "mock_observation.npz",
 ) -> "MockObservation":
     """Generate a set of 'mock' observations for the sf-sample and compas output file (COMPAS_H5_PATH)."""
-    return make_mock_obs(compas_h5_path, sf_sample, fname=fname)
+    return make_mock_obs(
+        compas_h5_path, duration=duration, sf_sample=sf_sample, fname=fname
+    )
 
 
 @click.command(name="batch_lnl_generation")
@@ -103,6 +113,13 @@ def cli_make_mock_obs(
 )
 @click.argument(
     "parameter_table", type=click.Path(exists=True, dir_okay=False)
+)
+@click.option(
+    "--duration",
+    default=1,
+    help="Duration of the observation",
+    type=float,
+    show_default=True,
 )
 @click.option(
     "--n_bootstraps",
@@ -129,6 +146,7 @@ def cli_batch_lnl_generation(
     mcz_obs: str,
     compas_h5_path: str,
     parameter_table: Union[pd.DataFrame, str],
+    duration: float,
     n_bootstraps: int = 100,
     plots: bool = True,
     outdir: str = "out_mcz_grids",
@@ -140,12 +158,13 @@ def cli_batch_lnl_generation(
     The likelihoods are saved to OUTDIR/*_lnl.csv
     """
     batch_lnl_generation(
-        mcz_obs,
-        compas_h5_path,
-        parameter_table,
-        n_bootstraps,
-        plots,
-        outdir,
+        mcz_obs=mcz_obs,
+        compas_h5_path=compas_h5_path,
+        parameter_table=parameter_table,
+        duration=duration,
+        n_bootstraps=n_bootstraps,
+        save_images=plots,
+        outdir=outdir,
     )
 
 
