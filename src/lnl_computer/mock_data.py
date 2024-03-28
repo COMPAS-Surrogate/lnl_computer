@@ -28,9 +28,13 @@ def load_mock_data(outdir: str):
 class MockData(object):
     """Mocking utilities."""
 
-    def __init__(self, outdir: str):
+    def __init__(
+        self, outdir: str, duration: float, sf_params: Dict[str, float] = None
+    ):
         os.makedirs(outdir, exist_ok=True)
         self.outdir = outdir
+        self.duration = duration
+        self.sf_params = sf_params or {}
 
     @property
     def compas_filename(self):
@@ -51,7 +55,7 @@ class MockData(object):
         duration: float,
         sf_params: Dict[str, float] = None,
     ):
-        self = cls(outdir)
+        self = cls(outdir, duration, sf_params)
         if not os.path.exists(self.compas_filename):
             generate_mock_bbh_population_file(
                 filename=self.compas_filename, frac_bbh=0.05

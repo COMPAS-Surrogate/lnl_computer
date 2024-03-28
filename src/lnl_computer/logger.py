@@ -1,12 +1,12 @@
 import logging
-import sys
 
+import colorlog
 import tqdm
 
 
-class TqdmLoggingHandler(logging.Handler):
-    def __init__(self, level=logging.NOTSET):
-        super().__init__(level)
+class TqdmLoggingHandler(logging.StreamHandler):
+    def __init__(self):
+        logging.StreamHandler.__init__(self)
 
     def emit(self, record):
         try:
@@ -17,18 +17,27 @@ class TqdmLoggingHandler(logging.Handler):
             self.handleError(record)
 
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = TqdmLoggingHandler()
-formatter = logging.Formatter(
-    "%(asctime)s| LNL-COMPUTER [%(levelname)s]: %(message)s",
-    datefmt="%d-%m-%y %H:%M:%S",
-)
-handler.setFormatter(formatter)
+def setup_logger(name: str):
+    logger = colorlog.getLogger(name)
+    logger.setLevel(logging.INFO)
+    handler = TqdmLoggingHandler()
+    handler.setFormatter(
+        colorlog.ColoredFormatter(
+            "%(log_color)s%(name)s | %(asctime)s | %(levelname)s | %(message)s",
+            datefmt="%d/%m/%y %H:%M:%S",
+            log_colors={
+                "DEBUG": "cyan",
+                "INFO": "white",
+                "SUCCESS:": "green",
+                "WARNING": "yellow",
+                "ERROR": "red",
+                "CRITICAL": "red,bg_white",
+            },
+        )
+    )
+
+    logger.addHandler(handler)
+    return logger
 
 
-# stream_handler = logging.StreamHandler(sys.stdout)
-
-# stream_handler.setFormatter(formatter)
-# logger.addHandler(stream_handler)
-logger.addHandler(handler)
+logger = setup_logger("lnl_computer")

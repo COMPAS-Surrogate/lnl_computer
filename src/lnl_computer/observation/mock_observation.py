@@ -51,13 +51,13 @@ class MockObservation(Observation):
         )
 
     @classmethod
-    def from_compas_h5(cls, compas_h5_fname: str, **kwargs):
+    def from_compas_h5(cls, compas_h5_fname: str, duration: float, **kwargs):
         kwargs["cosmological_parameters"] = kwargs.get(
             "cosmological_parameters", DEFAULT_DICT
         )
         mcz_grid = McZGrid.from_compas_output(compas_h5_fname, **kwargs)
         mcz_grid.bin_data()
-        return cls.from_mcz_grid(mcz_grid)
+        return cls.from_mcz_grid(mcz_grid, duration=duration)
 
     def plot(self) -> plt.Figure:
         fig = self.mcz_grid.plot()
