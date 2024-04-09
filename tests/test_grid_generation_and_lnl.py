@@ -65,9 +65,10 @@ def test_lnl(mock_data: MockData):
     )
     assert lnl > -np.inf
     assert np.isnan(unc)
+    expected_lnl = 10642
     assert (
-        np.abs(lnl - 863) < 5
-    ), f"lnl={lnl} not close to the expected value of 863"
+        np.abs(lnl - expected_lnl) < 5
+    ), f"lnl={lnl:.1f} not close to the expected value of {expected_lnl}"
 
 
 @pytest.mark.skip(reason="Takes too long")

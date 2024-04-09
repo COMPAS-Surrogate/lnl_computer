@@ -55,6 +55,15 @@ class MockData(object):
         duration: float,
         sf_params: Dict[str, float] = None,
     ):
+        return cls.load(outdir, duration, sf_params)
+
+    @classmethod
+    def load(
+        cls,
+        outdir: str,
+        duration: float,
+        sf_params: Dict[str, float] = None,
+    ):
         self = cls(outdir, duration, sf_params)
         if not os.path.exists(self.compas_filename):
             generate_mock_bbh_population_file(
@@ -105,7 +114,7 @@ def _get_true_params(mock_data: MockData):
         lnl = (
             grid.lnl(
                 mcz_obs=mock_data.observations.mcz,
-                duration=mock_data.du,
+                duration=mock_data.duration,
                 compas_h5_path=mock_data.compas_filename,
                 sf_sample=true_params.copy(),
                 n_bootstraps=0,
