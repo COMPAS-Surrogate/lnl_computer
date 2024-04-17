@@ -37,7 +37,7 @@ def make_sf_table(
     :return: pandas dataframe containing cosmic integration parameters
     """
     logger.info(f"Generating {n} samples of {parameters}")
-    parameters = parameters or ["aSF", "dSF", "mu_z", "sigma_z"]
+    parameters = parameters or ["aSF", "dSF", "muz", "sigma0"]
     parameter_table = pd.DataFrame(
         draw_star_formation_samples(
             n,
@@ -54,10 +54,10 @@ def make_sf_table(
 
 
 def make_mock_obs(
-        compas_h5_path: str,
-        sf_sample: Union[Dict, str],
-        duration: float = 1,
-        fname: str = "mock_observation.npz",
+    compas_h5_path: str,
+    sf_sample: Union[Dict, str],
+    duration: float,
+    fname: str = "mock_observation.npz",
 ) -> "MockObservation":
     """Generate a detection matrix for a given set of star formation parameters
     :param compas_h5_path:
@@ -75,7 +75,7 @@ def make_mock_obs(
         duration=duration,
         save_plots=False,
     )
-    obs = MockObservation.from_mcz_grid(mcz_grid)
+    obs = MockObservation.from_mcz_grid(mcz_grid, duration=duration)
     obs.save(fname)
 
     # save truth-json
@@ -96,12 +96,13 @@ def _write_json(data, fname):
 
 
 def batch_lnl_generation(
-        mcz_obs: Union[Observation, str],
-        compas_h5_path: str,
-        parameter_table: Union[pd.DataFrame, str],
-        n_bootstraps: int = 100,
-        save_images: bool = True,
-        outdir: str = "out_mcz_grids",
+    mcz_obs: Union[Observation, str],
+    compas_h5_path: str,
+    parameter_table: Union[pd.DataFrame, str],
+    duration: float = 1,
+    n_bootstraps: int = 100,
+    save_images: bool = True,
+    outdir: str = "out_mcz_grids",
 ) -> None:
     """
     Generate a set of COMPAS Mc-Z detection rate matrices
@@ -125,7 +126,7 @@ def batch_lnl_generation(
 
     kwargs = dict(
         mcz_obs=mcz_obs,
-        duration=1,
+        duration=duration,
         compas_h5_path=compas_h5_path,
         save_plots=save_images,
         outdir=outdir,

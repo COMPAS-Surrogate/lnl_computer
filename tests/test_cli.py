@@ -39,7 +39,13 @@ def test_cli_make_mock_obs(mock_data: MockData, tmp_path):
     asf = 0.01
     out = runner.invoke(
         cli_make_mock_obs,
-        [mock_data.compas_filename, "--sf_sample", f"aSF:{asf}", "--fname", fname],
+        [
+            mock_data.compas_filename,
+            "--sf_sample",
+            f"aSF:{asf}",
+            "--fname",
+            fname,
+        ],
     )
     print(out.stdout)
     assert out.exit_code == 0
@@ -58,7 +64,9 @@ def test_cli_batch_lnl_generation(mock_data, tmp_path):
 
     # STEP 2: generate mock observations
     mock_fname = f"{tmp_path}/mock_obs.npz"
-    make_mock_obs(mock_data.compas_filename, sf_parm, fname=mock_fname)
+    make_mock_obs(
+        mock_data.compas_filename, sf_parm, fname=mock_fname, duration=1
+    )
 
     # STEP 3: generate lnl data
     runner = CliRunner()

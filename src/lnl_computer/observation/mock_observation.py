@@ -3,12 +3,19 @@ import numpy as np
 import pandas as pd
 
 from ..cosmic_integration.mcz_grid import McZGrid
+from ..cosmic_integration.star_formation_paramters import DEFAULT_DICT
 from ..logger import logger
 from .observation import Observation
 
 
 class MockObservation(Observation):
-    def __init__(self, rate2d: np.ndarray, mcz: np.ndarray, mcz_grid: McZGrid):
+    def __init__(
+        self,
+        rate2d: np.ndarray,
+        mcz: np.ndarray,
+        mcz_grid: McZGrid,
+        duration: float,
+    ):
         """
         A mock observation of a population of BBHs.
 
@@ -20,12 +27,13 @@ class MockObservation(Observation):
         self.mcz = mcz
         self.mcz_grid = mcz_grid
         self.outdir = mcz_grid.outdir
+        self.duration = duration
 
     @classmethod
     def from_mcz_grid(
         cls,
         mcz_grid: McZGrid,
-        duration: float = 1.0,
+        duration: float,
         n_obs: int = None,
     ) -> "MockObservation":
         """Make a fake detection matrix with the same shape as the mcz_grid"""
@@ -38,7 +46,18 @@ class MockObservation(Observation):
             mc_bin, z_bin = mcz_grid.get_matrix_bin_idx(mc, z)
             rate2d[mc_bin, z_bin] += 1
 
-        return MockObservation(rate2d=rate2d, mcz=event_mcz, mcz_grid=mcz_grid)
+        return MockObservation(
+            rate2d=rate2d, mcz=event_mcz, mcz_grid=mcz_grid, duration=duration
+        )
+
+    @classmethod
+    def from_compas_h5(cls, compas_h5_fname: str, duration: float, **kwargs):
+        kwargs["cosmological_parameters"] = kwargs.get(
+            "cosmological_parameters", DEFAULT_DICT
+        )
+        mcz_grid = McZGrid.from_compas_output(compas_h5_fname, **kwargs)
+        mcz_grid.bin_data()
+        return cls.from_mcz_grid(mcz_grid, duration=duration)
 
     def plot(self) -> plt.Figure:
         fig = self.mcz_grid.plot()
@@ -56,7 +75,7 @@ class MockObservation(Observation):
         return fig
 
     def __repr__(self) -> str:
-        return f"<MockObservation({self.n_events} events)>"
+        return f"<MockObservation({self.n_events} events, {self.duration}yrs)>"
 
     @property
     def label(self) -> str:
@@ -68,6 +87,7 @@ class MockObservation(Observation):
         return {
             "rate2d": self.rate2d,
             "mcz": self.mcz,
+            "duration": self.duration,
             **mcz_grid_data,
         }
 
@@ -78,12 +98,13 @@ class MockObservation(Observation):
             rate2d=data["rate2d"],
             mcz=data["mcz"],
             mcz_grid=McZGrid.from_dict(data),
+            duration=data["duration"],
         )
 
 
 def _sample_events_from_mcz_grid(
     mcz_grid: McZGrid,
-    duration: float = 1.0,
+    duration: float,
     n_obs: float = None,
 ) -> np.ndarray:
     """
@@ -100,7 +121,9 @@ def _sample_events_from_mcz_grid(
     :return: np.ndarray of shape (n_obs, 2) where each row is (mc, z)
     """
     n_obs = mcz_grid.n_detections(duration) if n_obs is None else n_obs
-
+    logger.info(
+        f"Sampling {n_obs:.1f} events ({duration}yrs) from mcz_grid[{mcz_grid}]"
+    )
     df = _mcz_to_df(mcz_grid)
     if np.sum(df.rate) > 0:
         n_events = df.sample(

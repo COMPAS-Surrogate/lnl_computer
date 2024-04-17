@@ -10,19 +10,31 @@ DEFAULT_SF_PARAMETERS = dict(
     bSF=2.77,
     cSF=2.9,
     dSF=4.7,
+    mu_z=-0.23,
+    sigma_0=0.39,
     muz=-0.23,
     sigma0=0.39,
 )
+DEFAULT_DICT = {
+    k: DEFAULT_SF_PARAMETERS[k] for k in ["aSF", "dSF", "mu_z", "sigma_0"]
+}
 
 STAR_FORMATION_RANGES = dict(
-    muz=[-0.5, -0.001],  # Jeff's alpha
-    sigma0=[0.1, 0.6],  # Jeff's sigma
+    mu_z=[-0.5, -0.001],  # Jeff's alpha
+    sigma_0=[0.1, 0.6],  # Jeff's sigma
     aSF=[0.005, 0.015],
     dSF=[4.2, 5.2],
 )
+# STAR_FORMATION_RANGES = dict(
+#     mu_z=[-2, -0.001],  # Jeff's alpha
+#     sigma_0=[0.1, 2],  # Jeff's sigma
+#     aSF=[0.005, 0.2],
+#     dSF=[3, 5.2],
+# )
+
 LATEX_LABELS = dict(
-    muz=r"$\mu_z$",
-    sigma0=r"$\sigma_0$",
+    mu_z=r"$\mu_z$",
+    sigma_0=r"$\sigma_0$",
     aSF=r"$\rm{SF}[a]$",
     dSF=r"$\rm{SF}[d]$",
 )

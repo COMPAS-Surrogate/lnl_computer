@@ -1,6 +1,7 @@
 import glob
 import os
 
+import numpy as np
 import pytest
 
 from lnl_computer.cosmic_integration.mcz_grid import McZGrid
@@ -12,7 +13,8 @@ TEST_DIR = os.path.join(HERE, "test_data")
 
 @pytest.fixture
 def mock_data() -> MockData:
-    return generate_mock_data(outdir=TEST_DIR)
+    np.random.seed(42)
+    return generate_mock_data(outdir=TEST_DIR, duration=1)
 
 
 @pytest.fixture

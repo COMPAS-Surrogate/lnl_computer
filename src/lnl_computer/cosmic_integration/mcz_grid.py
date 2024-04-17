@@ -1,8 +1,7 @@
 import os
 import shutil
-from typing import Dict, List, Tuple, Union
+from typing import Dict, Tuple
 
-import h5py
 import numpy as np
 import pandas as pd
 from compas_python_utils.cosmic_integration.binned_cosmic_integrator.detection_matrix import (
@@ -103,7 +102,7 @@ class McZGrid(DetectionMatrix):
         return np.nansum(self.rate_matrix) * duration
 
     def get_lnl(
-        self, mcz_obs: np.ndarray, duration: float = 1.0
+        self, mcz_obs: np.ndarray, duration: float
     ) -> Tuple[float, float]:
         """Get Lnl+/-unc from the mcz_obs"""
         lnl = ln_likelihood(
@@ -127,7 +126,7 @@ class McZGrid(DetectionMatrix):
         return self.to_dict()
 
     def __repr__(self) -> str:
-        return f"<mcz_grid: [{self.n_systems} systems], {self.param_str}>"
+        return f"<mcz_grid: [{self.n_systems} systems], {self.param_str}, [{self.compas_path}]>"
 
     @property
     def param_str(self):
@@ -137,11 +136,36 @@ class McZGrid(DetectionMatrix):
 
     @property
     def label(self) -> str:
-        return super().label.replace("detmatrix", "mczgrid")
+        return McZGrid.get_label(
+            self.compas_path, self.cosmological_parameters
+        )
 
     @property
     def default_fname(self) -> str:
-        return f"{self.outdir}/{self.label}.h5"
+        return McZGrid.get_default_fname(
+            self.outdir, self.compas_path, self.cosmological_parameters
+        )
+
+    @staticmethod
+    def get_label(
+        compas_path: str, cosmological_parameters: Dict[str, float]
+    ) -> str:
+        compas_fname = os.path.basename(compas_path).split(".")[0]
+        p_str = McZGrid.param_dict_to_str(cosmological_parameters)
+        return f"mczgrid_{compas_fname}_{p_str}"
+
+    @staticmethod
+    def get_default_fname(
+        outdir: str,
+        compas_path: str,
+        cosmological_parameters: Dict[str, float],
+    ):
+        l = McZGrid.get_label(compas_path, cosmological_parameters)
+        return f"{outdir}/{l}.h5"
+
+    @staticmethod
+    def param_dict_to_str(param_dict: Dict[str, float]) -> str:
+        return "_".join([f"{k}_{v:.4f}" for k, v in param_dict.items()])
 
     @property
     def n_bootstraps(self) -> int:
@@ -159,6 +183,8 @@ class McZGrid(DetectionMatrix):
         outdir=None,
         fname="",
         n_bootstraps=0,
+        clean=False,
+        **kwargs,
     ) -> "McZGrid":
         """Generate a detection matrix for a given set of star formation parameters
         :param compas_h5_path:
@@ -169,22 +195,40 @@ class McZGrid(DetectionMatrix):
         :param n_bootstraps: N
         :return:
         """
-        if os.path.isfile(fname):
-            logger.warning(f"Skipping {fname} generation as it already exists")
-            return cls.from_h5(fname)
+
+        if sf_sample is None:
+            sf_sample = DEFAULT_SF_PARAMETERS
+            logger.warning(
+                f"sf_sample not provided, using default: {sf_sample}"
+            )
+
+        if not clean:
+            fnames = [
+                fname,
+                cls.get_default_fname(outdir, compas_h5_path, sf_sample),
+            ]
+            for f in fnames:
+                if os.path.isfile(f):
+                    logger.warning(
+                        f"Skipping {f} generation as it already exists"
+                    )
+                    return cls.from_h5(f)
         if fname != "" and not fname.endswith(".h5"):
             logger.error(f"fname must end with .h5, got {fname}")
 
         if sf_sample is None:
             sf_sample = DEFAULT_SF_PARAMETERS
 
+        if "mu_z" in sf_sample:
+            sf_sample["muz"] = sf_sample.pop("mu_z")
+        if "sigma_0" in sf_sample:
+            sf_sample["sigma0"] = sf_sample.pop("sigma_0")
+
         params = dict(
-                aSF=sf_sample.get("aSF", DEFAULT_SF_PARAMETERS["aSF"]),
-                dSF=sf_sample.get("dSF", DEFAULT_SF_PARAMETERS["dSF"]),
-                mu_z=sf_sample.get("muz", DEFAULT_SF_PARAMETERS["muz"]),
-                sigma_0=sf_sample.get(
-                    "sigma0", DEFAULT_SF_PARAMETERS["sigma0"]
-                )
+            aSF=sf_sample.get("aSF", DEFAULT_SF_PARAMETERS["aSF"]),
+            dSF=sf_sample.get("dSF", DEFAULT_SF_PARAMETERS["dSF"]),
+            mu_z=sf_sample.get("muz", DEFAULT_SF_PARAMETERS["muz"]),
+            sigma_0=sf_sample.get("sigma0", DEFAULT_SF_PARAMETERS["sigma0"]),
         )
         logger.info(f"Generating McZ grid: {params}")
 
@@ -204,7 +248,7 @@ class McZGrid(DetectionMatrix):
 
     @classmethod
     def lnl(
-        cls, sf_sample: Dict, mcz_obs: np.ndarray, duration=1, **kwargs
+        cls, sf_sample: Dict, mcz_obs: np.ndarray, duration: float, **kwargs
     ) -> Tuple[float, float]:
         """Return the LnL(sf_sample|mcz_obs)+/-unc
 
@@ -219,13 +263,23 @@ class McZGrid(DetectionMatrix):
             os.makedirs(kwargs["outdir"], exist_ok=True)
         model = cls.generate_n_save(**kwargs, sf_sample=sf_sample)
         lnl, unc = model.get_lnl(mcz_obs=mcz_obs, duration=duration)
-        _save_lnl_dict_to_csv(lnl, unc, model, kwargs.get("fname", ""))
+        _save_lnl_dict_to_csv(
+            lnl,
+            unc,
+            model=model,
+            duration=duration,
+            fname=kwargs.get("fname", ""),
+        )
         return lnl, unc
 
 
-def _save_lnl_dict_to_csv(lnl, unc, model: McZGrid, fname: str) -> None:
+def _save_lnl_dict_to_csv(
+    lnl, unc, model: McZGrid, duration: float, fname: str
+) -> None:
     """Save the lnl and unc to a csv file"""
-    data = dict(lnl=lnl, unc=unc, **model.cosmological_parameters)
+    data = dict(
+        lnl=lnl, unc=unc, **model.cosmological_parameters, duration=duration
+    )
     # save lnl data to csv
     lnl_fname = f"{model.outdir}/{model.label}_lnl.csv"
     if fname != "":
