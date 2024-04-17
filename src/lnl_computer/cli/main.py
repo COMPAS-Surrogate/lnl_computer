@@ -93,7 +93,9 @@ def make_mock_obs(
     obs.save(fname)
 
     # save truth-json
-    lnl = mcz_grid.get_lnl(duration=duration, mcz_obs=obs.mcz)
+    lnl = mcz_grid.get_lnl(duration=duration, mcz_obs=obs.mcz)[
+        0
+    ]  # just the LnL -- no uncertainties
     truth_fname = os.path.dirname(fname) + "/truth.json"
     _write_json(
         data=dict(duration=duration, lnl=lnl, **sf_sample), fname=truth_fname
