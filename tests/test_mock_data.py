@@ -1,5 +1,8 @@
+import json
+
 import numpy as np
 
+from lnl_computer.cli.main import make_mock_obs
 from lnl_computer.mock_data import (
     McZGrid,
     MockData,
@@ -30,3 +33,19 @@ def test_reproducible_dataset(tmpdir):
     truth0 = data[0].truth
     truth1 = data[1].truth
     assert truth0 == truth1
+
+
+def test_mock_obs_lnl(tmpdir, mock_data: MockData):
+    make_mock_obs(
+        compas_h5_path=mock_data.compas_filename,
+        sf_sample=dict(aSF=0.01, dSF=4.70, mu_z=-0.23),
+        duration=1,
+        fname=f"{tmpdir}/mock_obs.npz",
+    )
+    truths_fn = f"{tmpdir}/truth.json"
+    # load the truth
+    with open(truths_fn, "r") as f:
+        truth = json.load(f)
+    assert isinstance(
+        truth["lnl"], float
+    ), f"truth['lnl'] not a float: {truth['lnl']}"

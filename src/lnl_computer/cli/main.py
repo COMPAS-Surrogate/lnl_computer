@@ -93,14 +93,11 @@ def make_mock_obs(
     obs.save(fname)
 
     # save truth-json
-    lnl = mcz_grid.get_lnl(duration=duration, mcz_obs=obs.mcz)[
-        0
-    ]  # just the LnL -- no uncertainties
+    lnl = mcz_grid.get_lnl(duration=duration, mcz_obs=obs.mcz)
     truth_fname = os.path.dirname(fname) + "/truth.json"
-    _write_json(
-        data=dict(duration=duration, lnl=lnl, **sf_sample), fname=truth_fname
-    )
-
+    truth_data = dict(duration=duration, lnl=lnl[0], **sf_sample)
+    logger.info(f"MockObs truth: {truth_data}")
+    _write_json(data=truth_data, fname=truth_fname)
     logger.info(
         f"Mock observation saved to {fname} and truths to {truth_fname}"
     )
