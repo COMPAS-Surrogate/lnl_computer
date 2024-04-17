@@ -7,6 +7,7 @@ from multiprocessing import cpu_count
 from typing import Dict, List, Tuple, Union
 
 import click
+import corner
 import numpy as np
 import pandas as pd
 from tqdm.contrib.concurrent import process_map
@@ -50,6 +51,17 @@ def make_sf_table(
     # TODO: DOUBLE CHECK WITH JEFF -- Muz, sigma_z, sigma_0???
 
     parameter_table.to_csv(fname, index=False)
+    fig = corner.corner(
+        parameter_table.values,
+        labels=parameters,
+        truths=None,
+        plot_datapoints=True,
+        plot_density=False,
+        plot_contours=False,
+        no_fill_contours=False,
+        fill_contours=False,
+    )
+    fig.savefig(fname.replace(".csv", ".png"))
     logger.info(f"Parameter table saved to {fname}")
 
 
@@ -58,6 +70,7 @@ def make_mock_obs(
     sf_sample: Union[Dict, str],
     duration: float,
     fname: str = "mock_observation.npz",
+    save_plots: bool = False,
 ) -> "MockObservation":
     """Generate a detection matrix for a given set of star formation parameters
     :param compas_h5_path:
@@ -76,10 +89,11 @@ def make_mock_obs(
         save_plots=False,
     )
     obs = MockObservation.from_mcz_grid(mcz_grid, duration=duration)
+
     obs.save(fname)
 
     # save truth-json
-    lnl = mcz_grid.lnl(sf_sample=sf_sample, duration=duration, mcz_obs=obs.mcz)
+    lnl = mcz_grid.get_lnl(duration=duration, mcz_obs=obs.mcz)
     truth_fname = os.path.dirname(fname) + "/truth.json"
     _write_json(
         data=dict(duration=duration, lnl=lnl, **sf_sample), fname=truth_fname

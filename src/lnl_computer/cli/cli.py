@@ -93,15 +93,28 @@ DEFAULT_SF_PARAMETERS = dict(
     default="mock_observation.npz",
     help="Output filename (must be a .npz)",
 )
+@click.option(
+    "--save_plots",
+    type=bool,
+    is_flag=True,
+    default=False,
+    help="Save diagnostic plots",
+    show_default=True,
+)
 def cli_make_mock_obs(
     compas_h5_path: str,
     sf_sample: Union[Dict, str],
     duration: float,
-    fname: str = "mock_observation.npz",
+    fname: str,
+    save_plots: bool,
 ) -> "MockObservation":
     """Generate a set of 'mock' observations for the sf-sample and compas output file (COMPAS_H5_PATH)."""
     return make_mock_obs(
-        compas_h5_path, duration=duration, sf_sample=sf_sample, fname=fname
+        compas_h5_path=compas_h5_path,
+        duration=duration,
+        sf_sample=sf_sample,
+        fname=fname,
+        save_plots=save_plots,
     )
 
 
@@ -186,14 +199,9 @@ def cli_combine_lnl_data(
 
 
 @click.command("mock_compas_output")
-@click.option(
-    "--fname",
-    type=str,
-    default="mock_compas_output.h5",
-    help="Output filename (must be a .h5)",
-)
+@click.argument("fname", type=str, default="mock_compas_output.h5")
 def cli_make_mock_compas_output(fname: str):
     """Generate a mock COMPAS output file at FNAME"""
     os.makedirs(os.path.dirname(fname), exist_ok=True)
-    generate_mock_bbh_population_file(fname=fname)
+    generate_mock_bbh_population_file(filename=fname)
     click.echo(f"Mock COMPAS output saved to {fname}")

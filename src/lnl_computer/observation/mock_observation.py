@@ -59,7 +59,7 @@ class MockObservation(Observation):
         mcz_grid.bin_data()
         return cls.from_mcz_grid(mcz_grid, duration=duration)
 
-    def plot(self) -> plt.Figure:
+    def plot(self, fname=None) -> plt.Figure:
         fig = self.mcz_grid.plot()
         axes = fig.get_axes()
         axes[0].scatter(
@@ -72,6 +72,10 @@ class MockObservation(Observation):
         )
         fig.suptitle(f"Mock population ({self.n_events} blue stars)")
         axes[1].set_title(self.mcz_grid.param_str, fontsize=7)
+
+        if fname:
+            fig.savefig(fname)
+
         return fig
 
     def __repr__(self) -> str:
