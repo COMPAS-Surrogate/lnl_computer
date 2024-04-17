@@ -21,10 +21,10 @@ from ..observation.observation import Observation
 
 
 def make_sf_table(
-        parameters: List[str] = None,
-        n: int = 50,
-        grid_parameterspace=False,
-        fname: str = "parameter_table.csv",
+    parameters: List[str] = None,
+    n: int = 50,
+    grid_parameterspace=False,
+    fname: str = "parameter_table.csv",
 ) -> pd.DataFrame:
     """Parses the table of parameters to generate mcz-grids for.
 
@@ -82,15 +82,17 @@ def make_mock_obs(
     lnl = mcz_grid.lnl(sf_sample=sf_sample, duration=duration, mcz_obs=obs.mcz)
     truth_fname = os.path.dirname(fname) + "/truth.json"
     _write_json(
-        data=dict(duration=duration, lnl=lnl, **sf_sample),
-        fname=truth_fname
+        data=dict(duration=duration, lnl=lnl, **sf_sample), fname=truth_fname
     )
 
-    logger.info(f"Mock observation saved to {fname} and truths to {truth_fname}")
+    logger.info(
+        f"Mock observation saved to {fname} and truths to {truth_fname}"
+    )
 
 
 def _write_json(data, fname):
     import json
+
     with open(fname, "w") as f:
         json.dump(data, f)
 
@@ -149,8 +151,8 @@ def batch_lnl_generation(
 
 
 def combine_lnl_data(
-        outdir: str = "out_mcz_grids",
-        fname: str = "",
+    outdir: str = "out_mcz_grids",
+    fname: str = "",
 ) -> None:
     """
     Combine the likelihood data from the generated mcz-grids into a single file

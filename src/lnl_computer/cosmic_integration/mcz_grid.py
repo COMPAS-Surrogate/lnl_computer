@@ -178,7 +178,7 @@ class McZGrid(DetectionMatrix):
         cls,
         compas_h5_path: str,
         sf_sample: Dict = None,
-        duration:float=1.0,
+        duration: float = 1.0,
         save_plots: bool = False,
         outdir=None,
         fname="",
