@@ -78,16 +78,21 @@ DEFAULT_SF_PARAMETERS = dict(
     help="Star formation parameters"
 )
 @click.option(
+    "--duration", type=float, default=1.0,
+    help="Duration of the observation",
+)
+@click.option(
     "--fname", type=str, default="mock_observation.npz",
     help="Output filename (must be a .npz)",
 )
 def cli_make_mock_obs(
         compas_h5_path: str,
         sf_sample: Union[Dict, str],
-        fname: str = "mock_observation.npz",
+        duration: float,
+        fname: str,
 ) -> "MockObservation":
     """Generate a set of 'mock' observations for the sf-sample and compas output file (COMPAS_H5_PATH). """
-    return make_mock_obs(compas_h5_path, sf_sample, fname=fname)
+    return make_mock_obs(compas_h5_path, sf_sample, duration, fname)
 
 
 @click.command(name="batch_lnl_generation")
