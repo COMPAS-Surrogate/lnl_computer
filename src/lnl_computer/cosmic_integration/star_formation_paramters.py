@@ -80,7 +80,7 @@ def draw_star_formation_samples(
         parameters = list(STAR_FORMATION_RANGES.keys())
     assert all(
         [p in STAR_FORMATION_RANGES for p in parameters]
-    ), "Invalid parameters"
+    ), f"Invalid parameters provided ({parameters} not in {STAR_FORMATION_RANGES.keys()}))"
     num_dim = len(parameters)
 
     ranges = STAR_FORMATION_RANGES.copy()
