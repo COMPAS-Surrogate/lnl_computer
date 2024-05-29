@@ -110,3 +110,10 @@ def draw_star_formation_samples(
             dict(zip(dict_of_params, t)) for t in zip(*dict_of_params.values())
         ]
     return dict_of_params
+
+
+def get_latex_labels(parameters) -> Union[str, List[str]]:
+    if isinstance(parameters, str):
+        return LATEX_LABELS[parameters]
+    else:
+        return [LATEX_LABELS[p] for p in parameters]
