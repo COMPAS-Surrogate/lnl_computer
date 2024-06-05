@@ -1,4 +1,5 @@
 import logging
+import os
 
 import colorlog
 import tqdm
@@ -41,5 +42,3 @@ def setup_logger(name: str):
 
 
 logger = setup_logger("lnl_computer")
-
-logger.info(__file__)
