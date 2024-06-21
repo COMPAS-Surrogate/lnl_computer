@@ -11,6 +11,7 @@ from compas_python_utils.cosmic_integration.binned_cosmic_integrator.detection_m
 
 from ..likelihood import ln_likelihood
 from ..logger import logger
+from ..observation import Observation
 from .star_formation_paramters import DEFAULT_SF_PARAMETERS
 
 
@@ -82,6 +83,11 @@ class McZGrid(DetectionMatrix):
             return 0
         return self.rate_matrix[mc_bin, z_bin] / self.n_detections(duration)
 
+    def get_prob_grid(self, duration: float = 1.0) -> np.ndarray:
+        if self.n_detections(duration) == 0:
+            return np.zeros_like(self.rate_matrix)
+        return self.rate_matrix / self.n_detections(duration)
+
     def get_bootstrapped_grid(self, i: int) -> "McZGrid":
         """Creates a new Uni using the ith bootstrapped rate matrix"""
         assert (
@@ -104,22 +110,22 @@ class McZGrid(DetectionMatrix):
 
     # TODO: account for LVK data
     def get_lnl(
-        self, mcz_obs: np.ndarray, duration: float
+        self, mcz_obs: Observation, duration: float
     ) -> Tuple[float, float]:
         """Get Lnl+/-unc from the mcz_obs"""
         lnl = ln_likelihood(
-            mcz_obs=mcz_obs,
-            model_prob_func=self.prob_of_mcz,
-            n_model=self.n_detections(duration),
+            obs=mcz_obs,
+            model=self,
+            duration=duration,
         )
         bootstrapped_lnls = []
         for i in range(self.n_bootstraps):
             bootstrap_mcz_grid = self.get_bootstrapped_grid(i)
             bootstrapped_lnls.append(
                 ln_likelihood(
-                    mcz_obs=mcz_obs,
-                    model_prob_func=bootstrap_mcz_grid.prob_of_mcz,
-                    n_model=bootstrap_mcz_grid.n_detections(duration),
+                    obs=mcz_obs,
+                    model=bootstrap_mcz_grid,
+                    duration=duration,
                 )
             )
         return lnl, np.std(np.array(bootstrapped_lnls))
@@ -250,7 +256,7 @@ class McZGrid(DetectionMatrix):
 
     @classmethod
     def lnl(
-        cls, sf_sample: Dict, mcz_obs: np.ndarray, duration: float, **kwargs
+        cls, sf_sample: Dict, mcz_obs: Observation, duration: float, **kwargs
     ) -> Tuple[float, float]:
         """Return the LnL(sf_sample|mcz_obs)+/-unc
 

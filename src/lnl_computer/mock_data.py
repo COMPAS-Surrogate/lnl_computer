@@ -86,7 +86,9 @@ class MockData(object):
 
     @property
     def mcz_grid(self) -> McZGrid:
-        return McZGrid.from_h5(self.mcz_grid_filename)
+        if not hasattr(self, "_mcz_grid"):
+            self._mcz_grid = McZGrid.from_h5(self.mcz_grid_filename)
+        return self._mcz_grid
 
     @property
     def observations(self) -> MockObservation:

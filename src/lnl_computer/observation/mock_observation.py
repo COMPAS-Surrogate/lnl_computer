@@ -105,6 +105,29 @@ class MockObservation(Observation):
             duration=data["duration"],
         )
 
+    def save(self, fname: str = ""):
+        if fname == "":
+            fname = f"{self.outdir}/{self.label}.npz"
+        np.savez(fname, **self.__dict__())
+
+    @property
+    def n_events(self) -> int:
+        return len(self.mcz)
+
+    @property
+    def weights(self) -> np.ndarray:
+        """
+        The weights of each event
+        shape: (n_events, mc_bins, z_bins)
+        """
+        if not hasattr(self, "_weights"):
+            w = np.zeros((self.n_events, *self.rate2d.shape))
+            for i, (mc, z) in enumerate(self.mcz):
+                mc_bin, z_bin = self.mcz_grid.get_matrix_bin_idx(mc, z)
+                w[i, mc_bin, z_bin] = 1
+            self._weights = w
+        return self._weights
+
 
 def _sample_events_from_mcz_grid(
     mcz_grid: McZGrid,

@@ -4,9 +4,11 @@ import numpy as np
 
 from .observation.observation import Observation
 
+Model = Callable[[float], float]
+
 
 def ln_poisson_likelihood(
-    n_obs: int, n_model: int, ignore_factorial=True
+    n_obs: float, n_model: float, ignore_factorial=True
 ) -> float:
     """
     Computes LnL(N_obs | N_model) = N_obs * ln(N_model) - N_model - ln(N_obs!)
@@ -30,26 +32,39 @@ def ln_poisson_likelihood(
 
 
 def ln_mcz_grid_likelihood(
-    mcz_obs: np.ndarray, model_prob_func: Callable
+    obs_weights: np.ndarray, model_prob_grid: np.ndarray
 ) -> float:
     """
-    Computes LnL(mc, z | model) = sum_i  ln p(mc_i, z_i | model)     (for N_obs events)
-    :param mcz_obs: [[mc,z], [mc,z], ...] Array of observed mc and z values for each event (exact measurement)
-    :param model_prob_func: model_func(mc,z) -> prob(mc_i, z_i | model)
-    :return:
+    Computes LnL(mc, z | model)
+        =  sum_n  ln sum_i  p(mc_i, z_i | model) * wi,n
+        (for N_obs events, and i {mc,z} bins)
+
+
+    for even_idx in range(n_events):
+        p_event = 0
+        for mc_idx in range(n_mc):
+            for z_idx in range(n_z):
+                w = obs_weights[even_idx, mc_idx, z_idx]
+                p_event += w * model_prob_grid[mc_idx, z_idx]
+        lnl += np.log(p_event)
+
     """
-    return np.sum([np.log(model_prob_func(mc, z)) for mc, z in mcz_obs])
+    p_events = np.einsum("nij,ij->n", obs_weights, model_prob_grid)
+    return np.nansum(np.log(p_events))
 
 
-# TODO: use weights
 def ln_likelihood(
-    mcz_obs: np.ndarray,
-    model_prob_func: Callable,
-    n_model: float,
+    obs: Observation,
+    model: "Model",
+    duration: float,
     detailed=False,
 ) -> Union[float, Tuple[float, float, float]]:
-    poisson_lnl = ln_poisson_likelihood(len(mcz_obs), n_model)
-    mcz_lnl = ln_mcz_grid_likelihood(mcz_obs, model_prob_func)
+    poisson_lnl = ln_poisson_likelihood(
+        obs.n_events, model.n_detections(duration)
+    )
+    mcz_lnl = ln_mcz_grid_likelihood(
+        obs.weights, model.get_prob_grid(duration)
+    )
     lnl = poisson_lnl + mcz_lnl
     if detailed:
         return lnl, poisson_lnl, mcz_lnl
