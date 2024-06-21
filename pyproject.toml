@@ -30,7 +30,8 @@ dependencies = [
     "bilby",
     "loguru",
     "colorlog",
-    "compas_python_utils@git+https://github.com/TeamCOMPAS/COMPAS.git"
+    "compas_python_utils@git+https://github.com/TeamCOMPAS/COMPAS.git",
+    "ogc4_interface@git+https://github.com/COMPAS-Surrogate/ogc4_interface.git"
 ]
 
 [project.optional-dependencies]

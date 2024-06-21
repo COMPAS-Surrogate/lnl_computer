@@ -93,7 +93,7 @@ def make_mock_obs(
     obs.save(fname)
 
     # save truth-json
-    lnl = mcz_grid.get_lnl(duration=duration, mcz_obs=obs.mcz)
+    lnl = mcz_grid.get_lnl(duration=duration, mcz_obs=obs)
     truth_fname = os.path.dirname(fname) + "/truth.json"
     truth_data = dict(duration=duration, lnl=lnl[0], **sf_sample)
     logger.info(f"MockObs truth: {truth_data}")
@@ -151,7 +151,7 @@ def batch_lnl_generation(
     logger.info(
         f"Generating mcz-grids (with {n_proc} threads for {n} samples of {param_names}) [{kwargs}]"
     )
-    kwargs["mcz_obs"] = mcz_obs.mcz
+    kwargs["mcz_obs"] = mcz_obs
     # setting up args for process_map
     _lnl_func = partial(McZGrid.lnl, **kwargs)
     process_map(
