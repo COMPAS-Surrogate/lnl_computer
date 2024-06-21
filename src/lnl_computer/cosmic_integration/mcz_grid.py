@@ -1,5 +1,6 @@
 import os
 import shutil
+from collections import namedtuple
 from typing import Dict, Tuple
 
 import numpy as np
@@ -101,6 +102,7 @@ class McZGrid(DetectionMatrix):
         """Calculate the number of detections in a given duration (in years)"""
         return np.nansum(self.rate_matrix) * duration
 
+    # TODO: account for LVK data
     def get_lnl(
         self, mcz_obs: np.ndarray, duration: float
     ) -> Tuple[float, float]:

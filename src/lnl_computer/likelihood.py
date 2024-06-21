@@ -2,6 +2,8 @@ from typing import Callable, Tuple, Union
 
 import numpy as np
 
+from .observation.observation import Observation
+
 
 def ln_poisson_likelihood(
     n_obs: int, n_model: int, ignore_factorial=True
@@ -39,6 +41,7 @@ def ln_mcz_grid_likelihood(
     return np.sum([np.log(model_prob_func(mc, z)) for mc, z in mcz_obs])
 
 
+# TODO: use weights
 def ln_likelihood(
     mcz_obs: np.ndarray,
     model_prob_func: Callable,
