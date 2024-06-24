@@ -25,9 +25,9 @@ def test_reproducible_dataset(tmpdir):
     assert np.allclose(grid0.rate_matrix, grid1.rate_matrix)
 
     # ensure the observations are the same
-    obs0 = MockObservation.from_npz(data[0].observations_filename)
-    obs1 = MockObservation.from_npz(data[1].observations_filename)
-    assert np.allclose(obs0.mcz, obs1.mcz)
+    obs0 = MockObservation.load(data[0].observations_filename)
+    obs1 = MockObservation.load(data[1].observations_filename)
+    assert np.allclose(obs0.weights, obs1.weights)
 
     # ensure the truth is the same
     truth0 = data[0].truth
@@ -36,11 +36,13 @@ def test_reproducible_dataset(tmpdir):
 
 
 def test_mock_obs_lnl(tmpdir, mock_data: MockData):
+    cosmo_params = dict(aSF=0.01, dSF=4.70, mu_z=-0.23)
+    obs_fname = f"{tmpdir}/mock_obs.npz"
     make_mock_obs(
         compas_h5_path=mock_data.compas_filename,
-        sf_sample=dict(aSF=0.01, dSF=4.70, mu_z=-0.23),
+        sf_sample=cosmo_params,
         duration=1,
-        fname=f"{tmpdir}/mock_obs.npz",
+        fname=obs_fname,
     )
     truths_fn = f"{tmpdir}/truth.json"
     # load the truth
@@ -49,3 +51,9 @@ def test_mock_obs_lnl(tmpdir, mock_data: MockData):
     assert isinstance(
         truth["lnl"], float
     ), f"truth['lnl'] not a float: {truth['lnl']}"
+
+    # load the observation
+    obs = MockObservation.load(obs_fname)
+    # assert dict compare
+    assert obs.cosmological_parameters["aSF"] == cosmo_params["aSF"]
+    assert obs.cosmological_parameters["dSF"] == cosmo_params["dSF"]

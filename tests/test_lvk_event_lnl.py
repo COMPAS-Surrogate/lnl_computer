@@ -8,7 +8,7 @@ from lnl_computer.observation.lvk_observation import LVKObservation
 
 
 def test_lvk_observation(monkeypatched_mcz_grid: McZGrid, tmp_path: str):
-    obs = LVKObservation.from_ogc4()
+    obs = LVKObservation.from_ogc4_data()
     plt_dir = tmp_path + "/obs"
     os.makedirs(plt_dir, exist_ok=True)
     plot_lvk_observation(obs, monkeypatched_mcz_grid, plt_dir, 0)

@@ -90,7 +90,7 @@ DEFAULT_SF_PARAMETERS = dict(
 @click.option(
     "--fname",
     type=str,
-    default="mock_observation.npz",
+    default="observation.npz",
     help="Output filename (must be a .npz)",
 )
 @click.option(

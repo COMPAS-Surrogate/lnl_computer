@@ -56,7 +56,7 @@ def test_duration(mock_data: MockData):
 
 
 def test_ogc4_lnl(monkeypatched_mcz_grid: McZGrid, tmp_path: str):
-    obs = LVKObservation.from_ogc4()
+    obs = LVKObservation.from_ogc4_data()
     lnl, _, = monkeypatched_mcz_grid.get_lnl(
         mcz_obs=obs,
         duration=1,

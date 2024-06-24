@@ -8,6 +8,7 @@ from compas_python_utils.cosmic_integration.binned_cosmic_integrator.bbh_populat
 )
 
 from lnl_computer.cosmic_integration.mcz_grid import McZGrid
+from lnl_computer.observation import Observation
 from lnl_computer.observation.mock_observation import MockObservation
 
 
@@ -91,8 +92,8 @@ class MockData(object):
         return self._mcz_grid
 
     @property
-    def observations(self) -> MockObservation:
-        return MockObservation.from_npz(self.observations_filename)
+    def observations(self) -> Observation:
+        return Observation.load(fname=self.observations_filename)
 
     @property
     def truth(self) -> Dict:
@@ -115,7 +116,7 @@ def _get_true_params(mock_data: MockData):
         )
         lnl = (
             grid.lnl(
-                mcz_obs=mock_data.observations.mcz,
+                mcz_obs=mock_data.observations,
                 duration=mock_data.duration,
                 compas_h5_path=mock_data.compas_filename,
                 sf_sample=true_params.copy(),

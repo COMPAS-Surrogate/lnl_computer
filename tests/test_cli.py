@@ -14,6 +14,7 @@ from lnl_computer.cli.cli import (
     make_sf_table,
 )
 from lnl_computer.mock_data import MockData
+from lnl_computer.observation import Observation
 from lnl_computer.observation.mock_observation import MockObservation
 
 
@@ -49,8 +50,8 @@ def test_cli_make_mock_obs(mock_data: MockData, tmp_path):
     )
     print(out.stdout)
     assert out.exit_code == 0
-    obs = MockObservation.from_npz(fname)
-    assert obs.mcz_grid.cosmological_parameters["aSF"] == asf
+    obs = Observation.load(fname)
+    assert obs.cosmological_parameters["aSF"] == asf
 
 
 def test_cli_batch_lnl_generation(mock_data, tmp_path):

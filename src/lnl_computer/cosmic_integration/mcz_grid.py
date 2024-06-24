@@ -280,6 +280,14 @@ class McZGrid(DetectionMatrix):
         )
         return lnl, unc
 
+    @property
+    def n_mc_bins(self) -> int:
+        return len(self.chirp_mass_bins)
+
+    @property
+    def n_z_bins(self) -> int:
+        return len(self.redshift_bins)
+
 
 def _save_lnl_dict_to_csv(
     lnl, unc, model: McZGrid, duration: float, fname: str

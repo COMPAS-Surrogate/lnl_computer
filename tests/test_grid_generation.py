@@ -5,6 +5,7 @@ import pytest
 
 from lnl_computer.cosmic_integration.mcz_grid import McZGrid
 from lnl_computer.mock_data import MockData
+from lnl_computer.observation import Observation
 from lnl_computer.observation.mock_observation import MockObservation
 
 PLOT = False
@@ -36,7 +37,6 @@ def test_mcz_grid_generation_skip(mock_data: MockData, caplog, tmp_path):
 
 
 def test_load_mcz_grid_n_plot(mock_data: MockData, tmp_path):
-    # LOAD FROM H5
     new_uni = McZGrid.from_h5(mock_data.mcz_grid_filename)
     new_uni.plot().savefig(os.path.join(tmp_path, "mcz_grid.png"))
 
@@ -44,5 +44,5 @@ def test_load_mcz_grid_n_plot(mock_data: MockData, tmp_path):
 def test_obs_gen_n_save(mock_data: MockData, tmp_path):
     obs = MockObservation.from_mcz_grid(mock_data.mcz_grid, duration=1)
     obs.save(os.path.join(tmp_path, "mock_obs.npz"))
-    obs = MockObservation.from_npz(os.path.join(tmp_path, "mock_obs.npz"))
-    obs.plot().savefig(os.path.join(tmp_path, "mock_obs.png"))
+    obs = Observation.load(os.path.join(tmp_path, "mock_obs.npz"))
+    obs.plot(fname=os.path.join(tmp_path, "mock_obs.png"))
