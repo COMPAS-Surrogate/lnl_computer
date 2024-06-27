@@ -28,7 +28,7 @@ def test_mcz_grid_generation_skip(mock_data: MockData, caplog, tmp_path):
     # TRY TO RE-GENERATE (but will be skipped)
     McZGrid.generate_n_save(
         mock_data.compas_filename,
-        dict(aSF=0.01, dSF=4.70, muz=-0.23, sigma0=0.0),
+        dict(aSF=0.01, dSF=4.70, mu_z=-0.23, sigma_0=0.0),
         n_bootstraps=2,
         outdir=tmp_path,
         fname=mock_data.mcz_grid_filename,

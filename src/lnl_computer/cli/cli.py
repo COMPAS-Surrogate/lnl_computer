@@ -22,7 +22,7 @@ from .main import (
     "-p",
     type=str,
     multiple=True,
-    default=["aSF", "dSF", "muz", "sigma0"],
+    default=["aSF", "dSF", "mu_z", "sigma_0"],
     help="List of parameters to generate mcz-grids for",
 )
 @click.option(
@@ -66,8 +66,8 @@ DEFAULT_SF_PARAMETERS = dict(
     bSF=2.77,
     cSF=2.9,
     dSF=4.7,
-    muz=-0.23,
-    sigma0=0.39,
+    mu_z=-0.23,
+    sigma_0=0.39,
 )
 
 
@@ -77,7 +77,7 @@ DEFAULT_SF_PARAMETERS = dict(
     "--sf_sample",
     type=str,
     show_default=True,
-    default="aSF:0.01 dSF:4.7 muz:-0.23 sigma0:0.39",
+    default="aSF:0.01 dSF:4.7 mu_z:-0.23 sigma_0:0.39",
     help="Star formation parameters",
 )
 @click.option(

@@ -12,8 +12,6 @@ DEFAULT_SF_PARAMETERS = dict(
     dSF=4.7,
     mu_z=-0.23,
     sigma_0=0.39,
-    muz=-0.23,
-    sigma0=0.39,
 )
 DEFAULT_DICT = {
     k: DEFAULT_SF_PARAMETERS[k] for k in ["aSF", "dSF", "mu_z", "sigma_0"]

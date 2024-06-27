@@ -227,16 +227,11 @@ class McZGrid(DetectionMatrix):
         if sf_sample is None:
             sf_sample = DEFAULT_SF_PARAMETERS
 
-        if "mu_z" in sf_sample:
-            sf_sample["muz"] = sf_sample.pop("mu_z")
-        if "sigma_0" in sf_sample:
-            sf_sample["sigma0"] = sf_sample.pop("sigma_0")
-
         params = dict(
             aSF=sf_sample.get("aSF", DEFAULT_SF_PARAMETERS["aSF"]),
             dSF=sf_sample.get("dSF", DEFAULT_SF_PARAMETERS["dSF"]),
-            mu_z=sf_sample.get("muz", DEFAULT_SF_PARAMETERS["muz"]),
-            sigma_0=sf_sample.get("sigma0", DEFAULT_SF_PARAMETERS["sigma0"]),
+            mu_z=sf_sample.get("mu_z", DEFAULT_SF_PARAMETERS["mu_z"]),
+            sigma_0=sf_sample.get("sigma_0", DEFAULT_SF_PARAMETERS["sigma_0"]),
         )
         logger.info(f"Generating McZ grid: {params}")
 

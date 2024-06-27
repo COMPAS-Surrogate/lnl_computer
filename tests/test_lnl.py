@@ -39,7 +39,7 @@ def test_lnl_nan(mock_data: MockData, tmp_path: str):
         mcz_obs=mock_data.observations,
         duration=1,
         compas_h5_path=mock_data.compas_filename,
-        sf_sample=dict(aSF=0.01, dSF=4.70, mu_z=-0.01, sigma0=0.0),
+        sf_sample=dict(aSF=0.01, dSF=4.70, mu_z=-0.01, sigma_0=0.0),
         n_bootstraps=0,
         save_plots=True,
         outdir=f"{tmp_path}/nan_lnl",
