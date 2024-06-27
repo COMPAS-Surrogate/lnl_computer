@@ -78,6 +78,8 @@ def draw_star_formation_samples(
     """
     if parameters is None:
         parameters = list(STAR_FORMATION_RANGES.keys())
+    if isinstance(parameters, str):
+        parameters = [parameters]
     assert all(
         [p in STAR_FORMATION_RANGES for p in parameters]
     ), f"Invalid parameters provided ({parameters} not in {STAR_FORMATION_RANGES.keys()}))"

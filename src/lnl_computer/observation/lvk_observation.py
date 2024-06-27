@@ -6,7 +6,7 @@ from .observation import Observation
 
 class LVKObservation(Observation):
     @classmethod
-    def from_ogc4_data(cls, pastro_threshold=0.95):
+    def from_ogc4_data(cls, pastro_threshold=0.95) -> "LVKObservation":
         data = PopulationMcZ.load(pastro_threshold=pastro_threshold)
         w = data.weights
         # change from (n_events, z_bins, mc_bins) to (n_events, mc_bins, z_bins)
@@ -16,5 +16,8 @@ class LVKObservation(Observation):
             w,
             mc_bins=data.mc_bins,
             z_bins=data.z_bins,
-            label=f"LVKObs(n={ne}, bins=[{nmc}, {nz}]",
+            label=f"LVKObs({cls.weights_str(w)})]",
         )
+
+    def __repr__(self):
+        return "LVK" + super().__repr__()

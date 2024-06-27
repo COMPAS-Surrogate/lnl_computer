@@ -13,11 +13,6 @@ def test_lvk_observation(monkeypatched_mcz_grid: McZGrid, tmp_path: str):
     os.makedirs(plt_dir, exist_ok=True)
     plot_lvk_observation(obs, monkeypatched_mcz_grid, plt_dir, 0)
 
-    #
-    #
-    # for i in range(obs.n_events):
-    #     plot_lvk_observation(obs, monkeypatched_mcz_grid, plt_dir, i)
-
 
 def plot_lvk_observation(
     obs: LVKObservation, model: McZGrid, plt_dir: str, idx=0

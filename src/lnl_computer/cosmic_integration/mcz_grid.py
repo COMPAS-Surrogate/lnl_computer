@@ -256,7 +256,12 @@ class McZGrid(DetectionMatrix):
 
     @classmethod
     def lnl(
-        cls, sf_sample: Dict, mcz_obs: Observation, duration: float, **kwargs
+        cls,
+        sf_sample: Dict,
+        mcz_obs: Observation,
+        duration: float,
+        compas_h5_path: str,
+        **kwargs,
     ) -> Tuple[float, float]:
         """Return the LnL(sf_sample|mcz_obs)+/-unc
 
@@ -269,7 +274,11 @@ class McZGrid(DetectionMatrix):
         """
         if "outdir" in kwargs:
             os.makedirs(kwargs["outdir"], exist_ok=True)
-        model = cls.generate_n_save(**kwargs, sf_sample=sf_sample)
+        model = cls.generate_n_save(
+            compas_h5_path=compas_h5_path,
+            sf_sample=sf_sample,
+            **kwargs,
+        )
         lnl, unc = model.get_lnl(mcz_obs=mcz_obs, duration=duration)
         _save_lnl_dict_to_csv(
             lnl,

@@ -24,7 +24,10 @@ class Observation:
         self.cosmological_parameters = cosmological_parameters
 
     def __repr__(self):
-        return self.label
+        return f"Obs({self.weights_str(self.weights)})"
+
+    def __str__(self):
+        return self.__repr__()
 
     def __dict__(self):
         d = {
@@ -57,7 +60,7 @@ class Observation:
         label = os.path.basename(fname).split(".")[0]
         return cls(**loaded_data, label=label)
 
-    def plot(self, fname=None, ax=None) -> plt.Figure:
+    def plot(self, fname=None, ax=None, title=None) -> plt.Figure:
         if ax is None:
             fig, ax = plt.subplots(figsize=(5, 5))
         fig = ax.get_figure()
@@ -68,6 +71,14 @@ class Observation:
         ax.set_ylabel(r"$\mathcal{M}_{\rm src}\, [M_{\odot}]$")
         cbar = fig.colorbar(cbar, ax=ax)
         cbar.set_label(r"$\sum_{\rm events} w[i, z, \mathcal{M}]$")
+        if title is None:
+            title = str(self)
+        ax.set_title(title)
         if fname is not None:
             fig.savefig(fname)
         return fig
+
+    @staticmethod
+    def weights_str(weights):
+        ns, mcs, zs = weights.shape
+        return f"n={ns}, bins=[{mcs}, {zs}]"

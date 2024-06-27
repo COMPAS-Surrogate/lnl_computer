@@ -29,9 +29,9 @@ def test_reproducible_dataset(tmpdir):
     obs1 = MockObservation.load(data[1].observations_filename)
     assert np.allclose(obs0.weights, obs1.weights)
 
-    # ensure the truth is the same
-    truth0 = data[0].truth
-    truth1 = data[1].truth
+    # ensure the reference_param is the same
+    truth0 = data[0].reference_param
+    truth1 = data[1].reference_param
     assert truth0 == truth1
 
 
@@ -45,7 +45,7 @@ def test_mock_obs_lnl(tmpdir, mock_data: MockData):
         fname=obs_fname,
     )
     truths_fn = f"{tmpdir}/truth.json"
-    # load the truth
+    # load the reference_param
     with open(truths_fn, "r") as f:
         truth = json.load(f)
     assert isinstance(

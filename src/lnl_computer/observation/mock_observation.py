@@ -1,8 +1,12 @@
+from tempfile import TemporaryDirectory
 from typing import Dict
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from compas_python_utils.cosmic_integration.binned_cosmic_integrator.bbh_population import (
+    generate_mock_bbh_population_file,
+)
 
 from ..cosmic_integration.mcz_grid import McZGrid
 from ..cosmic_integration.star_formation_paramters import DEFAULT_DICT
@@ -12,29 +16,37 @@ from .observation import Observation
 
 class MockObservation(Observation):
     @classmethod
-    def from_mcz_grid(cls, mcz_grid: McZGrid, duration=None, n_obs=None):
+    def from_mcz_grid(
+        cls, mcz_grid: McZGrid, duration: int, n_obs: float = None
+    ):
         w = generate_mock_obs_weights(mcz_grid, duration, n_obs)
-        n_obs, n_mc_bins, n_z_bins = w.shape
         return cls(
             w,
             mcz_grid.chirp_mass_bins,
             mcz_grid.redshift_bins,
-            label=f"MockObs(n={n_obs}, bins=[{n_mc_bins}, {n_z_bins}]",
+            label=f"MockObs({cls.weights_str(w)})",
             cosmological_parameters=mcz_grid.cosmological_parameters,
         )
 
+    @classmethod
     def from_compas_h5(
         cls,
-        compas_h5_fname,
-        duration=None,
-        n_obs=None,
+        compas_h5_fname: str,
+        duration: float,
+        n_obs: int = None,
         cosmological_parameters=DEFAULT_DICT,
+        save_plots: bool = False,
     ):
         mcz_grid = McZGrid.from_compas_output(
-            compas_h5_fname, cosmological_parameters
+            compas_h5_fname,
+            cosmological_parameters,
+            save_plots=save_plots,
         )
         mcz_grid.bin_data()
-        return cls.from_compas_h5(mcz_grid, duration, n_obs)
+        return cls.from_mcz_grid(mcz_grid, duration, n_obs)
+
+    def __repr__(self):
+        return "Mock" + super().__repr__()
 
 
 def generate_mock_obs_weights(

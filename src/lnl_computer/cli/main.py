@@ -17,8 +17,8 @@ from ..cosmic_integration.star_formation_paramters import (
     draw_star_formation_samples,
 )
 from ..logger import logger
+from ..observation import Observation, load_observation
 from ..observation.mock_observation import MockObservation
-from ..observation.observation import Observation
 
 
 def make_sf_table(
@@ -91,11 +91,11 @@ def make_mock_obs(
     obs = MockObservation.from_mcz_grid(mcz_grid, duration=duration)
     obs.save(fname)
 
-    # save truth-json
+    # save reference_param-json
     lnl = mcz_grid.get_lnl(duration=duration, mcz_obs=obs)
-    truth_fname = os.path.dirname(fname) + "/truth.json"
+    truth_fname = os.path.dirname(fname) + "/reference_param.json"
     truth_data = dict(duration=duration, lnl=lnl[0], **sf_sample)
-    logger.info(f"MockObs truth: {truth_data}")
+    logger.info(f"MockObs reference_param: {truth_data}")
     _write_json(data=truth_data, fname=truth_fname)
     logger.info(
         f"Mock observation saved to {fname} and truths to {truth_fname}"
@@ -129,7 +129,7 @@ def batch_lnl_generation(
     """
     os.makedirs(outdir, exist_ok=True)
     if isinstance(mcz_obs, str):
-        mcz_obs = Observation.load(fname=mcz_obs)
+        mcz_obs = load_observation(mcz_obs)
     if isinstance(parameter_table, str):
         parameter_table = pd.read_csv(parameter_table)
     param_names = parameter_table.columns.tolist()
