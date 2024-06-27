@@ -1,0 +1,670 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Example LnL Computation &#8212; LnL-Computer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystyle.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'example';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="README.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">LnL-Computer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="README.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Example LnL...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="example-lnl-computation">
+<h1>Example LnL Computation<a class="headerlink" href="#example-lnl-computation" title="Permalink to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lnl_computer.cosmic_integration.mcz_grid</span> <span class="kn">import</span> <span class="n">McZGrid</span>
+<span class="kn">from</span> <span class="nn">lnl_computer.cosmic_integration.star_formation_paramters</span> <span class="kn">import</span> <span class="n">DEFAULT_DICT</span><span class="p">,</span> <span class="n">draw_star_formation_samples</span>
+<span class="kn">from</span> <span class="nn">lnl_computer.observation.mock_observation</span> <span class="kn">import</span> <span class="n">MockObservation</span>
+<span class="kn">from</span> <span class="nn">compas_python_utils.cosmic_integration.binned_cosmic_integrator.bbh_population</span> <span class="kn">import</span> \
+    <span class="n">generate_mock_bbh_population_file</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">MOCK_DATA_TYPE</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;MockData&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;compas_h5_path&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;sf_sample&#39;</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">generate_mock_data</span><span class="p">(</span><span class="n">tmpdir</span><span class="o">=</span><span class="s1">&#39;out_temp&#39;</span><span class="p">,</span> <span class="n">n_systems</span><span class="o">=</span><span class="mi">2000</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">DURATION</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">mock_compas_h5</span> <span class="o">=</span> <span class="n">generate_mock_bbh_population_file</span><span class="p">(</span>
+        <span class="n">n_systems</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">n_systems</span><span class="p">),</span> <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tmpdir</span><span class="si">}</span><span class="s2">/mock_compas.h5&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">mock_obs</span> <span class="o">=</span> <span class="n">MockObservation</span><span class="o">.</span><span class="n">from_compas_h5</span><span class="p">(</span><span class="n">mock_compas_h5</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">DURATION</span><span class="p">,</span> <span class="n">cosmological_parameters</span><span class="o">=</span><span class="n">DEFAULT_DICT</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">MOCK_DATA_TYPE</span><span class="p">(</span><span class="n">mock_compas_h5</span><span class="p">,</span> <span class="n">mock_obs</span><span class="p">,</span> <span class="n">DURATION</span><span class="p">,</span> <span class="n">DEFAULT_DICT</span><span class="p">)</span>
+
+
+<span class="n">MOCK_DATA</span> <span class="o">=</span> <span class="n">generate_mock_data</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<span class="k">def</span> <span class="nf">plot_lnls</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">lnls</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">lnls</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">sf_sample</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="o">*</span><span class="n">ylim</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;lnL&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">compute_lnls_for_param</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="p">):</span>
+    <span class="n">lnls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lnl_kwgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">mcz_obs</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span>
+        <span class="n">duration</span><span class="o">=</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span>
+        <span class="n">compas_h5_path</span><span class="o">=</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">compas_h5_path</span>
+    <span class="p">)</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">draw_star_formation_samples</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sf_sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">:</span>
+        <span class="n">lnl</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">McZGrid</span><span class="o">.</span><span class="n">lnl</span><span class="p">(</span><span class="n">sf_sample</span><span class="o">=</span><span class="n">sf_sample</span><span class="p">,</span> <span class="o">**</span><span class="n">lnl_kwgs</span><span class="p">)</span>
+        <span class="n">lnls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lnl</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">sf_sample</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">sf_sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">lnls</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">sigma0s</span><span class="p">,</span> <span class="n">sigma0_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">muzs</span><span class="p">,</span> <span class="n">muz_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">aSFs</span><span class="p">,</span> <span class="n">aSF_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">dSFs</span><span class="p">,</span> <span class="n">dSF_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:15:15 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.1}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "14ecd7a759bb4d7f9a79c0e585b90eab"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:15:29 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.15555555555555556}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3d424ee34a1e4a2ca0a285ff316a79e6"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:15:42 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.2111111111111111}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6a1feea5d0c442cb931f053ff174dc9"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:15:56 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.26666666666666666}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "c6fe1d547c874332810c50e2ab4ec499"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:05 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.3222222222222222}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "c9408ae9136349988365752f239c42cf"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:12 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.37777777777777777}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "86d3de5ba5594e33b8d753216f057a5b"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:19 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.43333333333333335}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "c3079b682c8b489da403fa7dc6f43a87"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:26 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.4888888888888888}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "23b694fc4b1f46109d606dcdce902e87"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:33 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.5444444444444444}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "09407d825d2048c3ba02d9c2c36ef83e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:39 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.6}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "5153b506e84e4aa9afb67e91d6897489"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:46 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.5, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "e6165c4f7167410f91d5695a8d7eaa27"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:52 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.44455555555555554, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "87dde037aeeb41debe9cf905ebce4d8e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:59 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.38911111111111113, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "a786297889504f159f32fb3e686f211e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:17:10 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.33366666666666667, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "355e11eee4ab443c9fcc67157c7c1f09"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:17:20 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.27822222222222226, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "69e0d9e7eb9047aa8d852291846e876e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:17:36 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.2227777777777778, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "6331a1dda8b943b6a4928ec87a97faef"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:17:47 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.16733333333333333, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3f70a24c3f3248039e2b7bf6385fb034"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:05 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.11188888888888893, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "ee70c760c30046fda3a226951b1e111b"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:15 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.056444444444444464, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "4f88d6fef89c4cec8831dfc722f4ffc6"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:22 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.001, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "bb2610692739401d9b029427d27e0558"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:29 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.005, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "44754d169eef467ab766b0290cd68954"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:39 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.0061111111111111106, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "180e88dfac1c448eb1aaafce1e6e55b3"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:51 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.007222222222222222, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "8e71665facbd40ab829eeaebafc3d3cd"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:58 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.008333333333333333, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "888d2dd2ce874f01a53961127ad69146"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:19:13 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.009444444444444443, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3769987c44af4910b733a0a0b0e22250"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:19:23 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.010555555555555554, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "78c61445c8c7405e85a4794d70146549"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:19:42 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.011666666666666665, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "2b5cbfdf159e43139e768105bb1b89ef"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:20:00 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.012777777777777777, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3318702aa575437686957a9885ea26ce"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:20:16 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.013888888888888888, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "63125a2fede74c27b406d137601d8a7f"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:20:31 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.015, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3abd9f5e212743c4b8559fe8b5b3d8d0"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:20:48 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.2, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "5ff9e5f0c3634c2f86dfbf1a424e8ce3"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:04 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.311111111111111, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "a92e681871594d0bbbe962f18d246bc6"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:18 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.4222222222222225, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d0da3863758b49589f138ef7792bd4cc"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:34 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.533333333333333, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "310353b508e341fea89d40296483b880"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:41 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.644444444444445, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "42dbdc3bfd83461aa5cf84d531dbbafa"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:48 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7555555555555555, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "b600ba14289d4659990d1e36dc32b59c"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:57 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.866666666666667, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3b92667e526447ccb8b5ae6a7859a5e5"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:22:12 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.977777777777778, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "b42e202f3c0f464f9c2216e570233fbb"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:22:29 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 5.088888888888889, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "fdbe9352a75f488b9561ab7ebca2e1b3"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:22:48 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 5.2, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "6ddaf7408a8f44f8873f240a79bf9051"}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">sigma0s</span><span class="p">,</span> <span class="n">sigma0_lnls</span><span class="p">)</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">muzs</span><span class="p">,</span> <span class="n">muz_lnls</span><span class="p">)</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">aSFs</span><span class="p">,</span> <span class="n">aSF_lnls</span><span class="p">)</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">dSFs</span><span class="p">,</span> <span class="n">dSF_lnls</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lnl_computer.observation</span> <span class="kn">import</span> <span class="n">load_observation</span>
+
+
+<span class="n">lvk_obs</span> <span class="o">=</span> <span class="n">load_observation</span><span class="p">(</span><span class="s1">&#39;LVK&#39;</span><span class="p">)</span> 
+
+<span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">sigma0s</span><span class="p">,</span> <span class="n">lvk_sigma0_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">lvk_obs</span><span class="p">,</span> <span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">muzs</span><span class="p">,</span> <span class="n">lvk_muz_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">lvk_obs</span><span class="p">,</span> <span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">aSFs</span><span class="p">,</span> <span class="n">lvk_aSF_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">lvk_obs</span><span class="p">,</span> <span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">dSFs</span><span class="p">,</span> <span class="n">lvk_dSF_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">lvk_obs</span><span class="p">,</span> <span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">sigma0s</span><span class="p">,</span> <span class="n">lvk_sigma0_lnls</span><span class="p">)</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">muzs</span><span class="p">,</span> <span class="n">lvk_muz_lnls</span><span class="p">)</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">aSFs</span><span class="p">,</span> <span class="n">lvk_aSF_lnls</span><span class="p">)</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">dSFs</span><span class="p">,</span> <span class="n">lvk_dSF_lnls</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/baeff40c4bb61dc94b157927ca180a25cb09bf437f7e62f793134d1063101648.png" src="_images/baeff40c4bb61dc94b157927ca180a25cb09bf437f7e62f793134d1063101648.png" />
+<img alt="_images/0e83de3ba9ba469ad2c745c8bb2714b63128c7ca83ff15fd37e58a6b5acda875.png" src="_images/0e83de3ba9ba469ad2c745c8bb2714b63128c7ca83ff15fd37e58a6b5acda875.png" />
+<img alt="_images/64bc8bbf86135cb38635f3c33c5c52322fb37b424341affea8f7bd6ac52afdf1.png" src="_images/64bc8bbf86135cb38635f3c33c5c52322fb37b424341affea8f7bd6ac52afdf1.png" />
+<img alt="_images/6246311365c60926fada30883b1cef3efb337d3eb38974c2938de9f40c5e08fd.png" src="_images/6246311365c60926fada30883b1cef3efb337d3eb38974c2938de9f40c5e08fd.png" />
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/example.ipynb">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
