@@ -335,6 +335,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 11/09/24 10:50:45 | INFO | source-path: /home/avaj040/Documents/projects/COSMIC_INTEGRATOR/lnl_computer/src/lnl_computer</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -355,11 +360,19 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "0b09df2ae699483bbbd6018fd51a2c0e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 11/09/24 10:50:52 | INFO | Sampling 156108.0 events (5yrs) from mcz_grid[&lt;mcz_grid: [1977 systems], aSF_0.0100000000_dSF_4.7000000000_mu_z_-0.2300000000_sigma_0_0.3900000000, [/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/lnl_computer/docs/out_temp/mock_compas.h5]&gt;]</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
+<span class="n">DURATION</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/pipeline/data/Z_all/COMPAS_Output.h5&#39;</span>
+<span class="n">MOCK_DATA</span> <span class="o">=</span> <span class="n">MockObservation</span><span class="o">.</span><span class="n">from_compas_h5</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">DURATION</span><span class="p">,</span> <span class="n">cosmological_parameters</span><span class="o">=</span><span class="n">DEFAULT_DICT</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">plot_lnls</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">lnls</span><span class="p">):</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
@@ -375,7 +388,8 @@ document.write(`
     <span class="n">lnl_kwgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">mcz_obs</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span>
         <span class="n">duration</span><span class="o">=</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span>
-        <span class="n">compas_h5_path</span><span class="o">=</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">compas_h5_path</span>
+        <span class="n">compas_h5_path</span><span class="o">=</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">compas_h5_path</span><span class="p">,</span>
+        <span class="n">save_plots</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
     <span class="n">samples</span> <span class="o">=</span> <span class="n">draw_star_formation_samples</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">sf_sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">:</span>
@@ -383,6 +397,11 @@ document.write(`
         <span class="n">lnls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lnl</span><span class="p">)</span>
     <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">sf_sample</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">sf_sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">lnls</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "7e43901dbf78438d98a6f59c2444e2f4"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 11/09/24 10:50:58 | INFO | Sampling 22.1 events (2yrs) from mcz_grid[&lt;mcz_grid: [5000000 systems], aSF_0.0100000000_dSF_4.7000000000_mu_z_-0.2300000000_sigma_0_0.3900000000, [/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/pipeline/data/Z_all/COMPAS_Output.h5]&gt;]</span>
 </pre></div>
 </div>
 </div>
@@ -398,127 +417,19 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:15:15 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.1}</span>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="nn">/tmp/ipykernel_97976/1393526066.py</span> in <span class="ni">&lt;cell line: 2&gt;</span><span class="nt">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">sigma0s</span><span class="p">,</span> <span class="n">sigma0_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">muzs</span><span class="p">,</span> <span class="n">muz_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">aSFs</span><span class="p">,</span> <span class="n">aSF_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">dSFs</span><span class="p">,</span> <span class="n">dSF_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+
+<span class="ne">AttributeError</span>: &#39;MockObservation&#39; object has no attribute &#39;obs&#39;
 </pre></div>
 </div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "14ecd7a759bb4d7f9a79c0e585b90eab"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:15:29 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.15555555555555556}</span>
-</pre></div>
 </div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3d424ee34a1e4a2ca0a285ff316a79e6"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:15:42 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.2111111111111111}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6a1feea5d0c442cb931f053ff174dc9"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:15:56 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.26666666666666666}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "c6fe1d547c874332810c50e2ab4ec499"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:05 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.3222222222222222}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "c9408ae9136349988365752f239c42cf"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:12 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.37777777777777777}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "86d3de5ba5594e33b8d753216f057a5b"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:19 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.43333333333333335}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "c3079b682c8b489da403fa7dc6f43a87"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:26 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.4888888888888888}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "23b694fc4b1f46109d606dcdce902e87"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:33 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.5444444444444444}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "09407d825d2048c3ba02d9c2c36ef83e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:39 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.6}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "5153b506e84e4aa9afb67e91d6897489"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:46 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.5, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "e6165c4f7167410f91d5695a8d7eaa27"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:52 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.44455555555555554, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "87dde037aeeb41debe9cf905ebce4d8e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:16:59 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.38911111111111113, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "a786297889504f159f32fb3e686f211e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:17:10 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.33366666666666667, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "355e11eee4ab443c9fcc67157c7c1f09"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:17:20 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.27822222222222226, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "69e0d9e7eb9047aa8d852291846e876e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:17:36 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.2227777777777778, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "6331a1dda8b943b6a4928ec87a97faef"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:17:47 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.16733333333333333, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3f70a24c3f3248039e2b7bf6385fb034"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:05 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.11188888888888893, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "ee70c760c30046fda3a226951b1e111b"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:15 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.056444444444444464, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "4f88d6fef89c4cec8831dfc722f4ffc6"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:22 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.001, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "bb2610692739401d9b029427d27e0558"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:29 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.005, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "44754d169eef467ab766b0290cd68954"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:39 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.0061111111111111106, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "180e88dfac1c448eb1aaafce1e6e55b3"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:51 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.007222222222222222, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "8e71665facbd40ab829eeaebafc3d3cd"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:18:58 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.008333333333333333, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "888d2dd2ce874f01a53961127ad69146"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:19:13 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.009444444444444443, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3769987c44af4910b733a0a0b0e22250"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:19:23 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.010555555555555554, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "78c61445c8c7405e85a4794d70146549"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:19:42 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.011666666666666665, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "2b5cbfdf159e43139e768105bb1b89ef"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:20:00 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.012777777777777777, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3318702aa575437686957a9885ea26ce"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:20:16 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.013888888888888888, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "63125a2fede74c27b406d137601d8a7f"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:20:31 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.015, &#39;dSF&#39;: 4.7, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3abd9f5e212743c4b8559fe8b5b3d8d0"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:20:48 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.2, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "5ff9e5f0c3634c2f86dfbf1a424e8ce3"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:04 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.311111111111111, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "a92e681871594d0bbbe962f18d246bc6"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:18 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.4222222222222225, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d0da3863758b49589f138ef7792bd4cc"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:34 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.533333333333333, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "310353b508e341fea89d40296483b880"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:41 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.644444444444445, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "42dbdc3bfd83461aa5cf84d531dbbafa"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:48 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.7555555555555555, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "b600ba14289d4659990d1e36dc32b59c"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:21:57 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.866666666666667, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3b92667e526447ccb8b5ae6a7859a5e5"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:22:12 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 4.977777777777778, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "b42e202f3c0f464f9c2216e570233fbb"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:22:29 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 5.088888888888889, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "fdbe9352a75f488b9561ab7ebca2e1b3"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 27/06/24 16:22:48 | INFO | Generating McZ grid: {&#39;aSF&#39;: 0.01, &#39;dSF&#39;: 5.2, &#39;mu_z&#39;: -0.23, &#39;sigma_0&#39;: 0.39}</span>
-</pre></div>
-</div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "6ddaf7408a8f44f8873f240a79bf9051"}</script></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
