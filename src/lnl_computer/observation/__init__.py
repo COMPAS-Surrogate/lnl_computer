@@ -3,7 +3,7 @@ import traceback
 from .observation import Observation
 
 
-def load_observation(obs: str) -> Observation:
+def load_observation(obs: str, **kwargs) -> Observation:
 
     assert isinstance(obs, str), f"Expected str, got {type(obs)}"
 
@@ -11,7 +11,7 @@ def load_observation(obs: str) -> Observation:
         if obs.upper() == "LVK":
             from .lvk_observation import LVKObservation
 
-            return LVKObservation.from_ogc4_data()
+            return LVKObservation.from_ogc4_data(**kwargs)
         elif obs.endswith(".npz"):
             return Observation.load(fname=obs)
         else:
