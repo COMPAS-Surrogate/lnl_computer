@@ -24,6 +24,7 @@ class MockObservation(Observation):
             w,
             mcz_grid.chirp_mass_bins,
             mcz_grid.redshift_bins,
+            duration,
             label=f"MockObs({cls.weights_str(w)})",
             cosmological_parameters=mcz_grid.cosmological_parameters,
         )

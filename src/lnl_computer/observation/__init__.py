@@ -4,6 +4,9 @@ from .observation import Observation
 
 
 def load_observation(obs: str) -> Observation:
+
+    assert isinstance(obs, str), f"Expected str, got {type(obs)}"
+
     try:
         if obs.upper() == "LVK":
             from .lvk_observation import LVKObservation

@@ -119,20 +119,13 @@ def cli_make_mock_obs(
 
 
 @click.command(name="batch_lnl_generation")
-@click.argument("mcz_obs", type=click.Path(exists=True))
+@click.argument("mcz_obs_path", type=click.Path(exists=True))
 @click.argument(
     "compas_h5_path",
     type=str,
 )
 @click.argument(
     "parameter_table", type=click.Path(exists=True, dir_okay=False)
-)
-@click.option(
-    "--duration",
-    default=1,
-    help="Duration of the observation",
-    type=float,
-    show_default=True,
 )
 @click.option(
     "--n_bootstraps",
@@ -156,10 +149,9 @@ def cli_make_mock_obs(
     show_default=True,
 )
 def cli_batch_lnl_generation(
-    mcz_obs: str,
+    mcz_obs_path: str,
     compas_h5_path: str,
     parameter_table: Union[pd.DataFrame, str],
-    duration: float,
     n_bootstraps: int = 100,
     plots: bool = True,
     outdir: str = "out_mcz_grids",
@@ -171,10 +163,9 @@ def cli_batch_lnl_generation(
     The likelihoods are saved to OUTDIR/*_lnl.csv
     """
     batch_lnl_generation(
-        mcz_obs=mcz_obs,
+        mcz_obs_path=mcz_obs_path,
         compas_h5_path=compas_h5_path,
         parameter_table=parameter_table,
-        duration=duration,
         n_bootstraps=n_bootstraps,
         save_images=plots,
         outdir=outdir,

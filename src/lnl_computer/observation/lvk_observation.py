@@ -25,6 +25,7 @@ class LVKObservation(Observation):
             w,
             mc_bins=data.mc_bins,
             z_bins=data.z_bins,
+            duration=data.duration,
             label=f"LVKObs({cls.weights_str(w)})]",
         )
 

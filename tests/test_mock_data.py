@@ -30,8 +30,8 @@ def test_reproducible_dataset(tmpdir):
     assert np.allclose(obs0.weights, obs1.weights)
 
     # ensure the reference_param is the same
-    truth0 = data[0].reference_param
-    truth1 = data[1].reference_param
+    truth0 = data[0].truth
+    truth1 = data[1].truth
     assert truth0 == truth1
 
 
@@ -44,7 +44,7 @@ def test_mock_obs_lnl(tmpdir, mock_data: MockData):
         duration=1,
         fname=obs_fname,
     )
-    truths_fn = f"{tmpdir}/truth.json"
+    truths_fn = f"{tmpdir}/reference_param.json"
     # load the reference_param
     with open(truths_fn, "r") as f:
         truth = json.load(f)

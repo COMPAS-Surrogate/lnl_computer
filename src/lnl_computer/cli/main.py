@@ -75,6 +75,7 @@ def make_mock_obs(
     """Generate a detection matrix for a given set of star formation parameters
     :param compas_h5_path:
     :param sf_sample: Dict of star formation parameters, or a string like "k1:v1 k2:v2"->{"k1":float(v1)", "k2":float(v2)}
+    :param duration: duration of the observation (years)
     :param fname: mcgrid-fname
     """
     assert fname.endswith(".npz"), "fname must end with .npz"
@@ -85,16 +86,15 @@ def make_mock_obs(
     mcz_grid = McZGrid.generate_n_save(
         compas_h5_path=compas_h5_path,
         sf_sample=sf_sample,
-        duration=duration,
         save_plots=save_plots,
     )
     obs = MockObservation.from_mcz_grid(mcz_grid, duration=duration)
     obs.save(fname)
 
     # save reference_param-json
-    lnl = mcz_grid.get_lnl(duration=duration, mcz_obs=obs)
+    lnl = mcz_grid.get_lnl(mcz_obs=obs)
     truth_fname = os.path.dirname(fname) + "/reference_param.json"
-    truth_data = dict(duration=duration, lnl=lnl[0], **sf_sample)
+    truth_data = dict(lnl=lnl[0], **sf_sample)
     logger.info(f"MockObs reference_param: {truth_data}")
     _write_json(data=truth_data, fname=truth_fname)
     logger.info(
@@ -110,10 +110,9 @@ def _write_json(data, fname):
 
 
 def batch_lnl_generation(
-    mcz_obs: Union[Observation, str],
+    mcz_obs_path: str,
     compas_h5_path: str,
     parameter_table: Union[pd.DataFrame, str],
-    duration: float = 1,
     n_bootstraps: int = 100,
     save_images: bool = True,
     outdir: str = "out_mcz_grids",
@@ -128,10 +127,11 @@ def batch_lnl_generation(
     :return: None
     """
     os.makedirs(outdir, exist_ok=True)
-    if isinstance(mcz_obs, str):
-        mcz_obs = load_observation(mcz_obs)
     if isinstance(parameter_table, str):
         parameter_table = pd.read_csv(parameter_table)
+
+    mcz_obs = load_observation(mcz_obs_path).__dict__()
+
     param_names = parameter_table.columns.tolist()
     n = len(parameter_table)
     n_proc = _get_n_workers()
@@ -140,7 +140,6 @@ def batch_lnl_generation(
 
     kwargs = dict(
         mcz_obs=mcz_obs,
-        duration=duration,
         compas_h5_path=compas_h5_path,
         save_plots=save_images,
         outdir=outdir,
@@ -150,12 +149,12 @@ def batch_lnl_generation(
     logger.info(
         f"Generating mcz-grids (with {n_proc} threads for {n} samples of {param_names}) [{kwargs}]"
     )
-    kwargs["mcz_obs"] = mcz_obs
     # setting up args for process_map
     _lnl_func = partial(McZGrid.lnl, **kwargs)
+    iterables = parameter_table.to_dict("records")
     process_map(
         _lnl_func,
-        parameter_table.to_dict("records"),
+        iterables,
         max_workers=n_proc,
         chunksize=n_proc,
     )

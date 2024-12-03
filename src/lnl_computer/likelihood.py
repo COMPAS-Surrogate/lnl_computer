@@ -4,7 +4,6 @@ import numpy as np
 
 from .observation.observation import Observation
 
-Model = Callable[[float], float]
 
 
 def ln_poisson_likelihood(
@@ -24,10 +23,8 @@ def ln_poisson_likelihood(
     if n_model <= 0:
         return -np.inf
     lnl = n_obs * np.log(n_model) - n_model
-
     if ignore_factorial is False:
         lnl += -np.log(np.math.factorial(n_obs))
-
     return lnl
 
 
@@ -55,17 +52,31 @@ def ln_mcz_grid_likelihood(
 
 def ln_likelihood(
     obs: Observation,
-    model: "Model",
-    duration: float,
+    model: "McZGrid",
     detailed=False,
-) -> Union[float, Tuple[float, float, float]]:
-    poisson_lnl = ln_poisson_likelihood(
-        obs.n_events, model.n_detections(duration)
-    )
-    mcz_lnl = ln_mcz_grid_likelihood(
-        obs.weights, model.get_prob_grid(duration)
-    )
+) -> Union[float, Tuple[float, float, float, float]]:
+    """
+    Compute the log likelihood of the model given the observation
+
+    :param obs: the observation
+    :param model: the McZ-grid model
+    :param detailed: return detailed likelihood components
+
+    :return: the log likelihood
+    if detailed:
+        return [lnl, poisson_lnl, mcz_lnl, model_n_detections]
+
+    """
+
+    # unpack the model into the grid and the number of detections
+    model_grid = model.get_prob_grid(obs.duration)
+    model_n_detections = model.n_detections(obs.duration)
+
+    # compute the likelihood
+    poisson_lnl = ln_poisson_likelihood(obs.n_events, model_n_detections)
+    mcz_lnl = ln_mcz_grid_likelihood(obs.weights, model_grid)
     lnl = poisson_lnl + mcz_lnl
     if detailed:
-        return lnl, poisson_lnl, mcz_lnl
+        return np.array([lnl, poisson_lnl, mcz_lnl, model_n_detections])
     return lnl
+

@@ -1,7 +1,7 @@
 import os
 import shutil
 from collections import namedtuple
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -11,7 +11,7 @@ from compas_python_utils.cosmic_integration.binned_cosmic_integrator.detection_m
 
 from ..likelihood import ln_likelihood
 from ..logger import logger
-from ..observation import Observation
+from ..observation import Observation, load_observation
 from .star_formation_paramters import DEFAULT_SF_PARAMETERS
 
 
@@ -108,15 +108,14 @@ class McZGrid(DetectionMatrix):
         """Calculate the number of detections in a given duration (in years)"""
         return np.nansum(self.rate_matrix) * duration
 
-    # TODO: account for LVK data
     def get_lnl(
-        self, mcz_obs: Observation, duration: float
+        self,
+        mcz_obs: Observation,
     ) -> Tuple[float, float]:
         """Get Lnl+/-unc from the mcz_obs"""
         lnl = ln_likelihood(
             obs=mcz_obs,
             model=self,
-            duration=duration,
         )
         bootstrapped_lnls = []
         for i in range(self.n_bootstraps):
@@ -125,7 +124,6 @@ class McZGrid(DetectionMatrix):
                 ln_likelihood(
                     obs=mcz_obs,
                     model=bootstrap_mcz_grid,
-                    duration=duration,
                 )
             )
         return lnl, np.std(np.array(bootstrapped_lnls))
@@ -186,7 +184,6 @@ class McZGrid(DetectionMatrix):
         cls,
         compas_h5_path: str,
         sf_sample: Dict = None,
-        duration: float = 1.0,
         save_plots: bool = False,
         outdir=None,
         fname="",
@@ -253,8 +250,7 @@ class McZGrid(DetectionMatrix):
     def lnl(
         cls,
         sf_sample: Dict,
-        mcz_obs: Observation,
-        duration: float,
+        mcz_obs: Union[Observation, str, Dict],
         compas_h5_path: str,
         **kwargs,
     ) -> Tuple[float, float]:
@@ -263,23 +259,28 @@ class McZGrid(DetectionMatrix):
         Also saves the Lnl+/-unc and params to a csv file
 
         :param mcz_obs: The observed mcz values
-        :param duration: The duration of the observation (in years)
         :param args: Arguments to pass to generate_n_save
         :return: The LnL value
         """
         if "outdir" in kwargs:
             os.makedirs(kwargs["outdir"], exist_ok=True)
+
+        if isinstance(mcz_obs, str):
+            mcz_obs = load_observation(mcz_obs)
+        elif isinstance(mcz_obs, dict):
+            mcz_obs = Observation.from_dict(mcz_obs)
+
         model = cls.generate_n_save(
             compas_h5_path=compas_h5_path,
             sf_sample=sf_sample,
             **kwargs,
         )
-        lnl, unc = model.get_lnl(mcz_obs=mcz_obs, duration=duration)
+
+        lnl, unc = model.get_lnl(mcz_obs=mcz_obs)
         _save_lnl_dict_to_csv(
             lnl,
             unc,
             model=model,
-            duration=duration,
             fname=kwargs.get("fname", ""),
         )
         return lnl, unc
@@ -294,11 +295,11 @@ class McZGrid(DetectionMatrix):
 
 
 def _save_lnl_dict_to_csv(
-    lnl, unc, model: McZGrid, duration: float, fname: str
+    lnl, unc, model: McZGrid, fname: str
 ) -> None:
     """Save the lnl and unc to a csv file"""
     data = dict(
-        lnl=lnl, unc=unc, **model.cosmological_parameters, duration=duration
+        lnl=lnl, unc=unc, **model.cosmological_parameters,
     )
     # save lnl data to csv
     lnl_fname = f"{model.outdir}/{model.label}_lnl.csv"

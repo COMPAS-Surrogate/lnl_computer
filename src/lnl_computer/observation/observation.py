@@ -11,12 +11,14 @@ class Observation:
         weights: np.ndarray,
         mc_bins: np.array,
         z_bins: np.array,
+        duration: float, # in years
         label: str = "",
         cosmological_parameters: Dict[str, float] = None,
     ):
         self.weights = weights
         self.mc_bins = mc_bins
         self.z_bins = z_bins
+        self.duration = duration
         self.n_events, self.n_mc_bins, self.n_z_bins = weights.shape
         assert len(mc_bins) == self.n_mc_bins
         assert len(z_bins) == self.n_z_bins
@@ -24,7 +26,7 @@ class Observation:
         self.cosmological_parameters = cosmological_parameters
 
     def __repr__(self):
-        return f"Obs({self.weights_str(self.weights)})"
+        return f"Obs({self.weights_str(self.weights)}, {self.duration} years)"
 
     def __str__(self):
         return self.__repr__()
@@ -34,6 +36,7 @@ class Observation:
             "weights": self.weights,
             "mc_bins": self.mc_bins,
             "z_bins": self.z_bins,
+            "duration": self.duration,
         }
         if self.cosmological_parameters:
             params = self.cosmological_parameters
@@ -42,6 +45,7 @@ class Observation:
                 dtype=[("key", "U10"), ("value", "f8")],
             )
             d["cosmological_parameters"] = params
+        d['label'] = self.label
         return d
 
     def save(self, fname: str = "", outdir: str = ""):
@@ -50,15 +54,25 @@ class Observation:
         np.savez(fname, **self.__dict__())
 
     @classmethod
+    def from_dict(cls, data: Dict):
+        if "cosmological_parameters" in data:
+            params = data["cosmological_parameters"]
+            if isinstance(params, np.ndarray):
+                params = {k: v for k, v in params}
+            data["cosmological_parameters"] = params
+        if isinstance(data['label'], np.ndarray):
+            data['label'] = data['label'].item()
+        if isinstance(data['duration'], np.ndarray):
+            data['duration'] = data['duration'].item()
+        return cls(**data)
+
+    @classmethod
     def load(cls, fname: str):
         data = np.load(fname)
         loaded_data = {k: data[k] for k in data.files}
-        if "cosmological_parameters" in data:
-            params = data["cosmological_parameters"]
-            params = {k: v for k, v in params}
-            loaded_data["cosmological_parameters"] = params
-        label = os.path.basename(fname).split(".")[0]
-        return cls(**loaded_data, label=label)
+        if "label" not in loaded_data:
+            loaded_data['label'] = os.path.basename(fname).split(".")[0]
+        return cls.from_dict(loaded_data)
 
     def plot(self, fname=None, ax=None, title=None) -> plt.Figure:
         if ax is None:

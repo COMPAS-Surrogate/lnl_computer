@@ -27,7 +27,6 @@ SF_SAMPLE = dict(aSF=0.01, dSF=4.70, mu_z=-0.23, sigma_z=0.0)
 mock_data = generate_mock_data(outdir='temp', sf_params=SF_SAMPLE)
 lnl, unc = McZGrid.lnl(
         mcz_obs=mock_data.observations.mcz,
-        duration=1,
         compas_h5_path=mock_data.compas_filename,
         sf_sample=SF_SAMPLE,
         n_bootstraps=0,
