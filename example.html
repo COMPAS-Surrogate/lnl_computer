@@ -336,7 +336,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 11/09/24 10:50:45 | INFO | source-path: /home/avaj040/Documents/projects/COSMIC_INTEGRATOR/lnl_computer/src/lnl_computer</span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 03/12/24 15:16:19 | INFO | source-path: /Users/avaj0001/Documents/projects/compas_dev/COSMIC_INT/lnl_computer/src/lnl_computer</span>
 </pre></div>
 </div>
 </div>
@@ -361,7 +361,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "0b09df2ae699483bbbd6018fd51a2c0e"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 11/09/24 10:50:52 | INFO | Sampling 156108.0 events (5yrs) from mcz_grid[&lt;mcz_grid: [1977 systems], aSF_0.0100000000_dSF_4.7000000000_mu_z_-0.2300000000_sigma_0_0.3900000000, [/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/lnl_computer/docs/out_temp/mock_compas.h5]&gt;]</span>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "4812613bc715488a9a07ce59b82b0ad3"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 03/12/24 15:16:29 | INFO | Sampling 140987.7 events (5yrs) from mcz_grid[&lt;mcz_grid: [1983 systems], aSF_0.0100000000_dSF_4.7000000000_mu_z_-0.2300000000_sigma_0_0.3900000000, [/Users/avaj0001/Documents/projects/compas_dev/COSMIC_INT/lnl_computer/docs/out_temp/mock_compas.h5]&gt;]</span>
 </pre></div>
 </div>
 </div>
@@ -401,7 +401,71 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "7e43901dbf78438d98a6f59c2444e2f4"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 11/09/24 10:50:58 | INFO | Sampling 22.1 events (2yrs) from mcz_grid[&lt;mcz_grid: [5000000 systems], aSF_0.0100000000_dSF_4.7000000000_mu_z_-0.2300000000_sigma_0_0.3900000000, [/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/pipeline/data/Z_all/COMPAS_Output.h5]&gt;]</span>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="nn">/var/folders/qt/rxjvm_j566v9qn7g754s1v9hzb3p7f/T/ipykernel_80745/3695915775.py</span> in <span class="ni">&lt;cell line: 5&gt;</span><span class="nt">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">DURATION</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/pipeline/data/Z_all/COMPAS_Output.h5&#39;</span>
+<span class="ne">----&gt; </span><span class="mi">5</span> <span class="n">MOCK_DATA</span> <span class="o">=</span> <span class="n">MockObservation</span><span class="o">.</span><span class="n">from_compas_h5</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">DURATION</span><span class="p">,</span> <span class="n">cosmological_parameters</span><span class="o">=</span><span class="n">DEFAULT_DICT</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> 
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="k">def</span> <span class="nf">plot_lnls</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">lnls</span><span class="p">):</span>
+
+<span class="nn">~/Documents/projects/compas_dev/COSMIC_INT/lnl_computer/src/lnl_computer/observation/mock_observation.py</span> in <span class="ni">from_compas_h5</span><span class="nt">(cls, compas_h5_fname, duration, n_obs, cosmological_parameters, save_plots)</span>
+<span class="g g-Whitespace">     </span><span class="mi">39</span>         <span class="n">save_plots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">40</span>     <span class="p">):</span>
+<span class="ne">---&gt; </span><span class="mi">41</span>         <span class="n">mcz_grid</span> <span class="o">=</span> <span class="n">McZGrid</span><span class="o">.</span><span class="n">from_compas_output</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">42</span>             <span class="n">compas_h5_fname</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">43</span>             <span class="n">cosmological_parameters</span><span class="p">,</span>
+
+<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/compas_python_utils/cosmic_integration/binned_cosmic_integrator/detection_matrix.py</span> in <span class="ni">from_compas_output</span><span class="nt">(cls, compas_path, cosmological_parameters, max_detectable_redshift, chirp_mass_bins, redshift_bins, outdir, save_plots, n_bootstrapped_matrices)</span>
+<span class="g g-Whitespace">     </span><span class="mi">63</span>     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DetectionMatrix&quot;</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">64</span> 
+<span class="ne">---&gt; </span><span class="mi">65</span>         <span class="n">bbh_population</span> <span class="o">=</span> <span class="n">BBHPopulation</span><span class="o">.</span><span class="n">from_compas_h5</span><span class="p">(</span><span class="n">compas_path</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">66</span>         <span class="n">cosmological_model</span> <span class="o">=</span> <span class="n">CosmologicalModel</span><span class="p">(</span><span class="o">**</span><span class="n">cosmological_parameters</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">67</span>         <span class="n">snr_grid</span> <span class="o">=</span> <span class="n">SNRGrid</span><span class="p">()</span>
+
+<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/compas_python_utils/cosmic_integration/binned_cosmic_integrator/bbh_population.py</span> in <span class="ni">from_compas_h5</span><span class="nt">(cls, path, m1_min, m1_max, m2_min, binary_fraction)</span>
+<span class="g g-Whitespace">     </span><span class="mi">82</span><span class="w"> </span>
+<span class="g g-Whitespace">     </span><span class="mi">83</span><span class="w">         </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="ne">---&gt; </span><span class="mi">84</span><span class="sd">         mask = BBHPopulation.__generate_mask(path)</span>
+<span class="g g-Whitespace">     </span><span class="mi">85</span><span class="sd">         m1, m2, t_form, t_merge, dco_seeds = _load_data(</span>
+<span class="g g-Whitespace">     </span><span class="mi">86</span><span class="sd">             path, &quot;BSE_Double_Compact_Objects&quot;,</span>
+
+<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/compas_python_utils/cosmic_integration/binned_cosmic_integrator/bbh_population.py</span> in <span class="ni">__generate_mask</span><span class="nt">(path)</span>
+<span class="g g-Whitespace">    </span><span class="mi">126</span><span class="sd">     @staticmethod</span>
+<span class="g g-Whitespace">    </span><span class="mi">127</span><span class="sd">     def __generate_mask(path):</span>
+<span class="ne">--&gt; </span><span class="mi">128</span><span class="sd">         type_1, type_2, hubble_mask, dco_seeds = _load_data(</span>
+<span class="g g-Whitespace">    </span><span class="mi">129</span><span class="sd">             path, &quot;BSE_Double_Compact_Objects&quot;,</span>
+<span class="g g-Whitespace">    </span><span class="mi">130</span><span class="sd">             [&quot;Stellar_Type(1)&quot;, &quot;Stellar_Type(2)&quot;, &quot;Merges_Hubble_Time&quot;, &quot;SEED&quot;]</span>
+
+<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/compas_python_utils/cosmic_integration/binned_cosmic_integrator/bbh_population.py</span> in <span class="ni">_load_data</span><span class="nt">(path, group, var_names, mask)</span>
+<span class="g g-Whitespace">    </span><span class="mi">191</span><span class="sd"> def _load_data(path: str, group: str, var_names: List[str], mask: Optional[xp.ndarray] = None):</span>
+<span class="g g-Whitespace">    </span><span class="mi">192</span><span class="sd">     &quot;&quot;&quot;</span><span class="n">Load</span> <span class="n">variables</span> <span class="kn">from</span> <span class="nn">a</span> <span class="n">hdf5</span> <span class="n">file</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">193</span><span class="s2">     with h5.File(path, &quot;r&quot;) as compas_file:</span>
+<span class="g g-Whitespace">    </span><span class="mi">194</span><span class="s2">         data = [</span>
+<span class="g g-Whitespace">    </span><span class="mi">195</span><span class="s2">             compas_file[group][var_name][...].squeeze().flatten() for var_name in var_names</span>
+
+<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/h5py/_hl/files.py</span> in <span class="ni">__init__</span><span class="nt">(self, name, mode, driver, libver, userblock_size, swmr, rdcc_nslots, rdcc_nbytes, rdcc_w0, track_order, fs_strategy, fs_persist, fs_threshold, fs_page_size, page_buf_size, min_meta_keep, min_raw_keep, locking, alignment_threshold, alignment_interval, meta_block_size, **kwds)</span>
+<span class="g g-Whitespace">    </span><span class="mi">560</span><span class="s2">                                  fs_persist=fs_persist, fs_threshold=fs_threshold,</span>
+<span class="g g-Whitespace">    </span><span class="mi">561</span><span class="s2">                                  fs_page_size=fs_page_size)</span>
+<span class="ne">--&gt; </span><span class="mi">562</span><span class="s2">                 fid = make_fid(name, mode, userblock_size, fapl, fcpl, swmr=swmr)</span>
+<span class="g g-Whitespace">    </span><span class="mi">563</span><span class="s2"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">564</span><span class="s2">             if isinstance(libver, tuple):</span>
+
+<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/h5py/_hl/files.py</span> in <span class="ni">make_fid</span><span class="nt">(name, mode, userblock_size, fapl, fcpl, swmr)</span>
+<span class="g g-Whitespace">    </span><span class="mi">233</span><span class="s2">         if swmr and swmr_support:</span>
+<span class="g g-Whitespace">    </span><span class="mi">234</span><span class="s2">             flags |= h5f.ACC_SWMR_READ</span>
+<span class="ne">--&gt; </span><span class="mi">235</span><span class="s2">         fid = h5f.open(name, flags, fapl=fapl)</span>
+<span class="g g-Whitespace">    </span><span class="mi">236</span><span class="s2">     elif mode == &#39;r+&#39;:</span>
+<span class="g g-Whitespace">    </span><span class="mi">237</span><span class="s2">         fid = h5f.open(name, h5f.ACC_RDWR, fapl=fapl)</span>
+
+<span class="nn">h5py/_objects.pyx</span> in <span class="ni">h5py._objects.with_phil.wrapper</span><span class="nt">()</span>
+
+<span class="nn">h5py/_objects.pyx</span> in <span class="ni">h5py._objects.with_phil.wrapper</span><span class="nt">()</span>
+
+<span class="nn">h5py/h5f.pyx</span> in <span class="ni">h5py.h5f.open</span><span class="nt">()</span>
+
+<span class="ne">FileNotFoundError</span>: [Errno 2] Unable to open file (unable to open file: name = &#39;/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/pipeline/data/Z_all/COMPAS_Output.h5&#39;, errno = 2, error message = &#39;No such file or directory&#39;, flags = 0, o_flags = 0)
 </pre></div>
 </div>
 </div>

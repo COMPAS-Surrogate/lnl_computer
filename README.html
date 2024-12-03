@@ -319,7 +319,6 @@ document.write(`
 <span class="n">mock_data</span> <span class="o">=</span> <span class="n">generate_mock_data</span><span class="p">(</span><span class="n">outdir</span><span class="o">=</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span> <span class="n">sf_params</span><span class="o">=</span><span class="n">SF_SAMPLE</span><span class="p">)</span>
 <span class="n">lnl</span><span class="p">,</span> <span class="n">unc</span> <span class="o">=</span> <span class="n">McZGrid</span><span class="o">.</span><span class="n">lnl</span><span class="p">(</span>
         <span class="n">mcz_obs</span><span class="o">=</span><span class="n">mock_data</span><span class="o">.</span><span class="n">observations</span><span class="o">.</span><span class="n">mcz</span><span class="p">,</span>
-        <span class="n">duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">compas_h5_path</span><span class="o">=</span><span class="n">mock_data</span><span class="o">.</span><span class="n">compas_filename</span><span class="p">,</span>
         <span class="n">sf_sample</span><span class="o">=</span><span class="n">SF_SAMPLE</span><span class="p">,</span>
         <span class="n">n_bootstraps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
