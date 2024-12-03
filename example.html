@@ -65,6 +65,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = 'example';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="COMPAS Detection Likelihood computer" href="README.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -158,6 +159,12 @@ const thebe_selector_output = ".output, .cell_output"
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Example LnL Computation
+                      </a>
+                    </li>
+                
   </ul>
 </nav></div>
       
@@ -243,6 +250,12 @@ document.write(`
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Example LnL Computation
+                      </a>
+                    </li>
+                
   </ul>
 </nav></div>
         
@@ -322,74 +335,50 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lnl_computer.cosmic_integration.mcz_grid</span> <span class="kn">import</span> <span class="n">McZGrid</span>
-<span class="kn">from</span> <span class="nn">lnl_computer.cosmic_integration.star_formation_paramters</span> <span class="kn">import</span> <span class="n">DEFAULT_DICT</span><span class="p">,</span> <span class="n">draw_star_formation_samples</span>
+<span class="kn">from</span> <span class="nn">lnl_computer.cosmic_integration.star_formation_paramters</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_DICT</span><span class="p">,</span>
+    <span class="n">draw_star_formation_samples</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">lnl_computer.observation.mock_observation</span> <span class="kn">import</span> <span class="n">MockObservation</span>
 <span class="kn">from</span> <span class="nn">compas_python_utils.cosmic_integration.binned_cosmic_integrator.bbh_population</span> <span class="kn">import</span> \
     <span class="n">generate_mock_bbh_population_file</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 03/12/24 15:16:19 | INFO | source-path: /Users/avaj0001/Documents/projects/compas_dev/COSMIC_INT/lnl_computer/src/lnl_computer</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">MOCK_DATA_TYPE</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;MockData&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;compas_h5_path&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;sf_sample&#39;</span><span class="p">])</span>
+
+<span class="n">MOCK_DATA_TYPE</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;MockData&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;compas_h5_path&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="s1">&#39;sf_sample&#39;</span><span class="p">])</span>
+
+<span class="n">TMPDIR</span> <span class="o">=</span> <span class="s1">&#39;out_temp&#39;</span>
+<span class="n">DURATION</span> <span class="o">=</span> <span class="mi">5</span>
 
 
-<span class="k">def</span> <span class="nf">generate_mock_data</span><span class="p">(</span><span class="n">tmpdir</span><span class="o">=</span><span class="s1">&#39;out_temp&#39;</span><span class="p">,</span> <span class="n">n_systems</span><span class="o">=</span><span class="mi">2000</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">generate_mock_data</span><span class="p">(</span><span class="n">tmpdir</span><span class="o">=</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">n_systems</span><span class="o">=</span><span class="mi">2000</span><span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">DURATION</span> <span class="o">=</span> <span class="mi">5</span>
     <span class="n">mock_compas_h5</span> <span class="o">=</span> <span class="n">generate_mock_bbh_population_file</span><span class="p">(</span>
-        <span class="n">n_systems</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">n_systems</span><span class="p">),</span> <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tmpdir</span><span class="si">}</span><span class="s2">/mock_compas.h5&quot;</span><span class="p">,</span>
+        <span class="n">n_systems</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">n_systems</span><span class="p">),</span> 
+        <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tmpdir</span><span class="si">}</span><span class="s2">/mock_compas.h5&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">mock_obs</span> <span class="o">=</span> <span class="n">MockObservation</span><span class="o">.</span><span class="n">from_compas_h5</span><span class="p">(</span><span class="n">mock_compas_h5</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">DURATION</span><span class="p">,</span> <span class="n">cosmological_parameters</span><span class="o">=</span><span class="n">DEFAULT_DICT</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">MOCK_DATA_TYPE</span><span class="p">(</span><span class="n">mock_compas_h5</span><span class="p">,</span> <span class="n">mock_obs</span><span class="p">,</span> <span class="n">DURATION</span><span class="p">,</span> <span class="n">DEFAULT_DICT</span><span class="p">)</span>
+    <span class="n">mock_obs</span> <span class="o">=</span> <span class="n">MockObservation</span><span class="o">.</span><span class="n">from_compas_h5</span><span class="p">(</span>
+        <span class="n">mock_compas_h5</span><span class="p">,</span> 
+        <span class="n">duration</span><span class="o">=</span><span class="n">DURATION</span><span class="p">,</span> 
+        <span class="n">cosmological_parameters</span><span class="o">=</span><span class="n">DEFAULT_DICT</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">MOCK_DATA_TYPE</span><span class="p">(</span><span class="n">mock_compas_h5</span><span class="p">,</span> <span class="n">mock_obs</span><span class="p">,</span> <span class="n">DEFAULT_DICT</span><span class="p">)</span>
 
 
-<span class="n">MOCK_DATA</span> <span class="o">=</span> <span class="n">generate_mock_data</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "4812613bc715488a9a07ce59b82b0ad3"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-White">lnl_computer | 03/12/24 15:16:29 | INFO | Sampling 140987.7 events (5yrs) from mcz_grid[&lt;mcz_grid: [1983 systems], aSF_0.0100000000_dSF_4.7000000000_mu_z_-0.2300000000_sigma_0_0.3900000000, [/Users/avaj0001/Documents/projects/compas_dev/COSMIC_INT/lnl_computer/docs/out_temp/mock_compas.h5]&gt;]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-<span class="n">DURATION</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/pipeline/data/Z_all/COMPAS_Output.h5&#39;</span>
-<span class="n">MOCK_DATA</span> <span class="o">=</span> <span class="n">MockObservation</span><span class="o">.</span><span class="n">from_compas_h5</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">DURATION</span><span class="p">,</span> <span class="n">cosmological_parameters</span><span class="o">=</span><span class="n">DEFAULT_DICT</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">plot_lnls</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">lnls</span><span class="p">):</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">lnls</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
-    <span class="n">ylim</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">sf_sample</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="o">*</span><span class="n">ylim</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;lnL&#39;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">compute_lnls_for_param</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="p">):</span>
     <span class="n">lnls</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">lnl_kwgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">mcz_obs</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span>
-        <span class="n">duration</span><span class="o">=</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span>
         <span class="n">compas_h5_path</span><span class="o">=</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">compas_h5_path</span><span class="p">,</span>
-        <span class="n">save_plots</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">save_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">outdir</span><span class="o">=</span><span class="n">TMPDIR</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">samples</span> <span class="o">=</span> <span class="n">draw_star_formation_samples</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_list</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">sf_sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">:</span>
@@ -397,79 +386,15 @@ document.write(`
         <span class="n">lnls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lnl</span><span class="p">)</span>
     <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">sf_sample</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">sf_sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">lnls</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="nn">/var/folders/qt/rxjvm_j566v9qn7g754s1v9hzb3p7f/T/ipykernel_80745/3695915775.py</span> in <span class="ni">&lt;cell line: 5&gt;</span><span class="nt">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">DURATION</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/pipeline/data/Z_all/COMPAS_Output.h5&#39;</span>
-<span class="ne">----&gt; </span><span class="mi">5</span> <span class="n">MOCK_DATA</span> <span class="o">=</span> <span class="n">MockObservation</span><span class="o">.</span><span class="n">from_compas_h5</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">DURATION</span><span class="p">,</span> <span class="n">cosmological_parameters</span><span class="o">=</span><span class="n">DEFAULT_DICT</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> 
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="k">def</span> <span class="nf">plot_lnls</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">lnls</span><span class="p">):</span>
 
-<span class="nn">~/Documents/projects/compas_dev/COSMIC_INT/lnl_computer/src/lnl_computer/observation/mock_observation.py</span> in <span class="ni">from_compas_h5</span><span class="nt">(cls, compas_h5_fname, duration, n_obs, cosmological_parameters, save_plots)</span>
-<span class="g g-Whitespace">     </span><span class="mi">39</span>         <span class="n">save_plots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">40</span>     <span class="p">):</span>
-<span class="ne">---&gt; </span><span class="mi">41</span>         <span class="n">mcz_grid</span> <span class="o">=</span> <span class="n">McZGrid</span><span class="o">.</span><span class="n">from_compas_output</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">42</span>             <span class="n">compas_h5_fname</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">43</span>             <span class="n">cosmological_parameters</span><span class="p">,</span>
 
-<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/compas_python_utils/cosmic_integration/binned_cosmic_integrator/detection_matrix.py</span> in <span class="ni">from_compas_output</span><span class="nt">(cls, compas_path, cosmological_parameters, max_detectable_redshift, chirp_mass_bins, redshift_bins, outdir, save_plots, n_bootstrapped_matrices)</span>
-<span class="g g-Whitespace">     </span><span class="mi">63</span>     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DetectionMatrix&quot;</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">64</span> 
-<span class="ne">---&gt; </span><span class="mi">65</span>         <span class="n">bbh_population</span> <span class="o">=</span> <span class="n">BBHPopulation</span><span class="o">.</span><span class="n">from_compas_h5</span><span class="p">(</span><span class="n">compas_path</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">66</span>         <span class="n">cosmological_model</span> <span class="o">=</span> <span class="n">CosmologicalModel</span><span class="p">(</span><span class="o">**</span><span class="n">cosmological_parameters</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">67</span>         <span class="n">snr_grid</span> <span class="o">=</span> <span class="n">SNRGrid</span><span class="p">()</span>
-
-<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/compas_python_utils/cosmic_integration/binned_cosmic_integrator/bbh_population.py</span> in <span class="ni">from_compas_h5</span><span class="nt">(cls, path, m1_min, m1_max, m2_min, binary_fraction)</span>
-<span class="g g-Whitespace">     </span><span class="mi">82</span><span class="w"> </span>
-<span class="g g-Whitespace">     </span><span class="mi">83</span><span class="w">         </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="ne">---&gt; </span><span class="mi">84</span><span class="sd">         mask = BBHPopulation.__generate_mask(path)</span>
-<span class="g g-Whitespace">     </span><span class="mi">85</span><span class="sd">         m1, m2, t_form, t_merge, dco_seeds = _load_data(</span>
-<span class="g g-Whitespace">     </span><span class="mi">86</span><span class="sd">             path, &quot;BSE_Double_Compact_Objects&quot;,</span>
-
-<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/compas_python_utils/cosmic_integration/binned_cosmic_integrator/bbh_population.py</span> in <span class="ni">__generate_mask</span><span class="nt">(path)</span>
-<span class="g g-Whitespace">    </span><span class="mi">126</span><span class="sd">     @staticmethod</span>
-<span class="g g-Whitespace">    </span><span class="mi">127</span><span class="sd">     def __generate_mask(path):</span>
-<span class="ne">--&gt; </span><span class="mi">128</span><span class="sd">         type_1, type_2, hubble_mask, dco_seeds = _load_data(</span>
-<span class="g g-Whitespace">    </span><span class="mi">129</span><span class="sd">             path, &quot;BSE_Double_Compact_Objects&quot;,</span>
-<span class="g g-Whitespace">    </span><span class="mi">130</span><span class="sd">             [&quot;Stellar_Type(1)&quot;, &quot;Stellar_Type(2)&quot;, &quot;Merges_Hubble_Time&quot;, &quot;SEED&quot;]</span>
-
-<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/compas_python_utils/cosmic_integration/binned_cosmic_integrator/bbh_population.py</span> in <span class="ni">_load_data</span><span class="nt">(path, group, var_names, mask)</span>
-<span class="g g-Whitespace">    </span><span class="mi">191</span><span class="sd"> def _load_data(path: str, group: str, var_names: List[str], mask: Optional[xp.ndarray] = None):</span>
-<span class="g g-Whitespace">    </span><span class="mi">192</span><span class="sd">     &quot;&quot;&quot;</span><span class="n">Load</span> <span class="n">variables</span> <span class="kn">from</span> <span class="nn">a</span> <span class="n">hdf5</span> <span class="n">file</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">193</span><span class="s2">     with h5.File(path, &quot;r&quot;) as compas_file:</span>
-<span class="g g-Whitespace">    </span><span class="mi">194</span><span class="s2">         data = [</span>
-<span class="g g-Whitespace">    </span><span class="mi">195</span><span class="s2">             compas_file[group][var_name][...].squeeze().flatten() for var_name in var_names</span>
-
-<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/h5py/_hl/files.py</span> in <span class="ni">__init__</span><span class="nt">(self, name, mode, driver, libver, userblock_size, swmr, rdcc_nslots, rdcc_nbytes, rdcc_w0, track_order, fs_strategy, fs_persist, fs_threshold, fs_page_size, page_buf_size, min_meta_keep, min_raw_keep, locking, alignment_threshold, alignment_interval, meta_block_size, **kwds)</span>
-<span class="g g-Whitespace">    </span><span class="mi">560</span><span class="s2">                                  fs_persist=fs_persist, fs_threshold=fs_threshold,</span>
-<span class="g g-Whitespace">    </span><span class="mi">561</span><span class="s2">                                  fs_page_size=fs_page_size)</span>
-<span class="ne">--&gt; </span><span class="mi">562</span><span class="s2">                 fid = make_fid(name, mode, userblock_size, fapl, fcpl, swmr=swmr)</span>
-<span class="g g-Whitespace">    </span><span class="mi">563</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">564</span><span class="s2">             if isinstance(libver, tuple):</span>
-
-<span class="nn">~/Documents/projects/deep_gw_pe_followup/venv/lib/python3.9/site-packages/h5py/_hl/files.py</span> in <span class="ni">make_fid</span><span class="nt">(name, mode, userblock_size, fapl, fcpl, swmr)</span>
-<span class="g g-Whitespace">    </span><span class="mi">233</span><span class="s2">         if swmr and swmr_support:</span>
-<span class="g g-Whitespace">    </span><span class="mi">234</span><span class="s2">             flags |= h5f.ACC_SWMR_READ</span>
-<span class="ne">--&gt; </span><span class="mi">235</span><span class="s2">         fid = h5f.open(name, flags, fapl=fapl)</span>
-<span class="g g-Whitespace">    </span><span class="mi">236</span><span class="s2">     elif mode == &#39;r+&#39;:</span>
-<span class="g g-Whitespace">    </span><span class="mi">237</span><span class="s2">         fid = h5f.open(name, h5f.ACC_RDWR, fapl=fapl)</span>
-
-<span class="nn">h5py/_objects.pyx</span> in <span class="ni">h5py._objects.with_phil.wrapper</span><span class="nt">()</span>
-
-<span class="nn">h5py/_objects.pyx</span> in <span class="ni">h5py._objects.with_phil.wrapper</span><span class="nt">()</span>
-
-<span class="nn">h5py/h5f.pyx</span> in <span class="ni">h5py.h5f.open</span><span class="nt">()</span>
-
-<span class="ne">FileNotFoundError</span>: [Errno 2] Unable to open file (unable to open file: name = &#39;/home/avaj040/Documents/projects/COSMIC_INTEGRATOR/pipeline/data/Z_all/COMPAS_Output.h5&#39;, errno = 2, error message = &#39;No such file or directory&#39;, flags = 0, o_flags = 0)
+<span class="n">MOCK_DATA</span> <span class="o">=</span> <span class="n">generate_mock_data</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
+<section id="mock-observations">
+<h2>Mock Observations<a class="headerlink" href="#mock-observations" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
@@ -480,37 +405,44 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="nn">/tmp/ipykernel_97976/1393526066.py</span> in <span class="ni">&lt;cell line: 2&gt;</span><span class="nt">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">sigma0s</span><span class="p">,</span> <span class="n">sigma0_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">muzs</span><span class="p">,</span> <span class="n">muz_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">aSFs</span><span class="p">,</span> <span class="n">aSF_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">dSFs</span><span class="p">,</span> <span class="n">dSF_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
-
-<span class="ne">AttributeError</span>: &#39;MockObservation&#39; object has no attribute &#39;obs&#39;
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">sigma0s</span><span class="p">,</span> <span class="n">sigma0_lnls</span><span class="p">)</span>
-<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">muzs</span><span class="p">,</span> <span class="n">muz_lnls</span><span class="p">)</span>
-<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">aSFs</span><span class="p">,</span> <span class="n">aSF_lnls</span><span class="p">)</span>
-<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">dSFs</span><span class="p">,</span> <span class="n">dSF_lnls</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_lnls</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">lnls</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">show_trues</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">lnls</span><span class="p">)</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">show_trues</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">MOCK_DATA</span><span class="o">.</span><span class="n">sf_sample</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="o">*</span><span class="n">ylim</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">sigma0s</span><span class="p">,</span> <span class="n">sigma0_lnls</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">show_trues</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">muzs</span><span class="p">,</span> <span class="n">muz_lnls</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">show_trues</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">aSFs</span><span class="p">,</span> <span class="n">aSF_lnls</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">show_trues</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">dSFs</span><span class="p">,</span> <span class="n">dSF_lnls</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">show_trues</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;lnL&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TMPDIR</span><span class="si">}</span><span class="s2">/mockobs_lnls.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p><img alt="" src="_images/mockobs_lnls.png" /></p>
+</section>
+<section id="using-lvk-observations">
+<h2>Using LVK Observations<a class="headerlink" href="#using-lvk-observations" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lnl_computer.observation</span> <span class="kn">import</span> <span class="n">load_observation</span>
 
-
-<span class="n">lvk_obs</span> <span class="o">=</span> <span class="n">load_observation</span><span class="p">(</span><span class="s1">&#39;LVK&#39;</span><span class="p">)</span> 
+<span class="n">lvk_obs</span> <span class="o">=</span> <span class="n">load_observation</span><span class="p">(</span>
+    <span class="s1">&#39;LVK&#39;</span><span class="p">,</span>
+    <span class="n">pastro_threshold</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">observing_runs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;O3a&quot;</span><span class="p">,</span> <span class="s2">&quot;O3b&quot;</span><span class="p">],</span>
+    <span class="n">filter_valid_mcz</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">sigma0s</span><span class="p">,</span> <span class="n">lvk_sigma0_lnls</span> <span class="o">=</span> <span class="n">compute_lnls_for_param</span><span class="p">(</span><span class="n">lvk_obs</span><span class="p">,</span> <span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
@@ -523,20 +455,20 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">sigma0s</span><span class="p">,</span> <span class="n">lvk_sigma0_lnls</span><span class="p">)</span>
-<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">muzs</span><span class="p">,</span> <span class="n">lvk_muz_lnls</span><span class="p">)</span>
-<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">aSFs</span><span class="p">,</span> <span class="n">lvk_aSF_lnls</span><span class="p">)</span>
-<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">dSFs</span><span class="p">,</span> <span class="n">lvk_dSF_lnls</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;sigma_0&#39;</span><span class="p">,</span> <span class="n">sigma0s</span><span class="p">,</span> <span class="n">lvk_sigma0_lnls</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;mu_z&#39;</span><span class="p">,</span> <span class="n">muzs</span><span class="p">,</span> <span class="n">lvk_muz_lnls</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;aSF&#39;</span><span class="p">,</span> <span class="n">aSFs</span><span class="p">,</span> <span class="n">lvk_aSF_lnls</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">plot_lnls</span><span class="p">(</span><span class="s1">&#39;dSF&#39;</span><span class="p">,</span> <span class="n">dSFs</span><span class="p">,</span> <span class="n">lvk_dSF_lnls</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;lnL&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TMPDIR</span><span class="si">}</span><span class="s2">/lvk_lnls.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<img alt="_images/baeff40c4bb61dc94b157927ca180a25cb09bf437f7e62f793134d1063101648.png" src="_images/baeff40c4bb61dc94b157927ca180a25cb09bf437f7e62f793134d1063101648.png" />
-<img alt="_images/0e83de3ba9ba469ad2c745c8bb2714b63128c7ca83ff15fd37e58a6b5acda875.png" src="_images/0e83de3ba9ba469ad2c745c8bb2714b63128c7ca83ff15fd37e58a6b5acda875.png" />
-<img alt="_images/64bc8bbf86135cb38635f3c33c5c52322fb37b424341affea8f7bd6ac52afdf1.png" src="_images/64bc8bbf86135cb38635f3c33c5c52322fb37b424341affea8f7bd6ac52afdf1.png" />
-<img alt="_images/6246311365c60926fada30883b1cef3efb337d3eb38974c2938de9f40c5e08fd.png" src="_images/6246311365c60926fada30883b1cef3efb337d3eb38974c2938de9f40c5e08fd.png" />
 </div>
-</div>
+<p><img alt="" src="_images/lvk_lnls.png" /></p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -568,6 +500,15 @@ document.write(`
                 <footer class="prev-next-footer">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="README.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">COMPAS Detection Likelihood computer</p>
+      </div>
+    </a>
 </div>
                 </footer>
               
@@ -576,6 +517,17 @@ document.write(`
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mock-observations">Mock Observations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-lvk-observations">Using LVK Observations</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
 
