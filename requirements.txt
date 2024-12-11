@@ -1,0 +1,1 @@
+compas_python_utils@git+https://github.com/TeamCOMPAS/COMPAS.git

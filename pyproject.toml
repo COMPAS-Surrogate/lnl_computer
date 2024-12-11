@@ -31,7 +31,6 @@ dependencies = [
     "loguru",
     "colorlog",
     "compas_surrogate.ogc4_interface",
-    "compas_python_utils@git+https://github.com/TeamCOMPAS/COMPAS.git",
 ]
 
 [project.optional-dependencies]

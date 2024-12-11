@@ -14,7 +14,8 @@ More specifically, this package:
 ## Installation
 
 ```bash
-pip install lnl_computer@git+https://github.com/COMPAS-Surrogate/lnl_computer.git
+pip install compas_python_utils@git+https://github.com/TeamCOMPAS/COMPAS.git
+pip install compas-surrogate.lnl_computer
 ```
 
 ## Example
