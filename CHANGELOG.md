@@ -1,11 +1,26 @@
 # CHANGELOG
 
 
+## v0.1.2 (2024-12-11)
+
+### Unknown
+
+* Merge branch 'main' of github.com:COMPAS-Surrogate/lnl_computer into main ([`aae1fad`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/aae1fad92253f2236123e50b9b448bb380e0a74a))
+
+
 ## v0.1.1 (2024-12-11)
 
 ### Bug Fixes
 
+* fix: correct build requirements in toml (cant include a git+https install) ([`a66af5d`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/a66af5db304920a57f58906322d24d98ddffe4e6))
+
+* fix: correct build requirements in toml (cant include a git+https install) ([`ea43c97`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/ea43c97020701063795b750af550e7c0c3b2e480))
+
 * fix: formatting ([`35d13f7`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/35d13f7c705fb61d191b75a6ac184ec1b57c2e70))
+
+### Chores
+
+* chore(release): 0.1.1 ([`9cb2174`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/9cb217446ddd1b078b21f1664e28ff74a9d735a8))
 
 ### Unknown
 
