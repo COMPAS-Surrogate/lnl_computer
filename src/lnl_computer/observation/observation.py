@@ -11,7 +11,7 @@ class Observation:
         weights: np.ndarray,
         mc_bins: np.array,
         z_bins: np.array,
-        duration: float, # in years
+        duration: float,  # in years
         label: str = "",
         cosmological_parameters: Dict[str, float] = None,
     ):
@@ -45,7 +45,7 @@ class Observation:
                 dtype=[("key", "U10"), ("value", "f8")],
             )
             d["cosmological_parameters"] = params
-        d['label'] = self.label
+        d["label"] = self.label
         return d
 
     def save(self, fname: str = "", outdir: str = ""):
@@ -60,10 +60,10 @@ class Observation:
             if isinstance(params, np.ndarray):
                 params = {k: v for k, v in params}
             data["cosmological_parameters"] = params
-        if isinstance(data['label'], np.ndarray):
-            data['label'] = data['label'].item()
-        if isinstance(data['duration'], np.ndarray):
-            data['duration'] = data['duration'].item()
+        if isinstance(data["label"], np.ndarray):
+            data["label"] = data["label"].item()
+        if isinstance(data["duration"], np.ndarray):
+            data["duration"] = data["duration"].item()
         return cls(**data)
 
     @classmethod
@@ -71,7 +71,7 @@ class Observation:
         data = np.load(fname)
         loaded_data = {k: data[k] for k in data.files}
         if "label" not in loaded_data:
-            loaded_data['label'] = os.path.basename(fname).split(".")[0]
+            loaded_data["label"] = os.path.basename(fname).split(".")[0]
         return cls.from_dict(loaded_data)
 
     def plot(self, fname=None, ax=None, title=None) -> plt.Figure:

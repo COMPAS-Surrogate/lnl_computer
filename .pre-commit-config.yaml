@@ -1,19 +1,22 @@
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.3.0
-  hooks:
-  - id: trailing-whitespace
-  - id: end-of-file-fixer
-  - id: debug-statements
+  # Basic pre-commit hooks
+  - repo: git@github.com:pre-commit/pre-commit-hooks.git
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: debug-statements
 
-- repo: https://github.com/psf/black
-  rev: 22.3.0
-  hooks:
-  - id: black
+  # Black for code formatting
+  - repo: git@github.com:psf/black.git
+    rev: 22.3.0
+    hooks:
+      - id: black
 
-- repo: https://github.com/pycqa/isort
-  rev: 5.11.5
-  hooks:
-    - id: isort
-      name: isort (python)
-      args: ["--profile", "black"]
+  # isort for import sorting
+  - repo: git@github.com:pycqa/isort.git
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (python)
+        args: ["--profile", "black"]

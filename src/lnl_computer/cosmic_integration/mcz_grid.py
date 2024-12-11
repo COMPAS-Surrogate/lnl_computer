@@ -294,12 +294,12 @@ class McZGrid(DetectionMatrix):
         return len(self.redshift_bins)
 
 
-def _save_lnl_dict_to_csv(
-    lnl, unc, model: McZGrid, fname: str
-) -> None:
+def _save_lnl_dict_to_csv(lnl, unc, model: McZGrid, fname: str) -> None:
     """Save the lnl and unc to a csv file"""
     data = dict(
-        lnl=lnl, unc=unc, **model.cosmological_parameters,
+        lnl=lnl,
+        unc=unc,
+        **model.cosmological_parameters,
     )
     # save lnl data to csv
     lnl_fname = f"{model.outdir}/{model.label}_lnl.csv"

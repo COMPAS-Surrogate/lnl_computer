@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "compas_surrogate.lnl_computer"  # PyPI name, prefixed with 'compas_surrogate'
 dynamic = ["version"]  # scm versioning (using tags)
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 description = "COMPAS detection Likelihood computer"
 readme = "README.md"
 authors = [
@@ -20,7 +20,7 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
 ]
 dependencies = [
     "arviz",
@@ -40,9 +40,17 @@ dev = [
     "pytest-cov>=4.1.0",
     "pre-commit",
     "flake8>=5.0.4",
-    "black==22.10.0",
+    "black",
     "jupyter-book",
+    "docformatter[tomli]"
 ]
+
+
+[tool.docformatter]
+recursive = true
+wrap-summaries = 82
+blank = true
+language = "python"
 
 [tool.setuptools_scm]
 version_file = "src/lnl_computer/_version.py"

@@ -5,7 +5,6 @@ import numpy as np
 from .observation.observation import Observation
 
 
-
 def ln_poisson_likelihood(
     n_obs: float, n_model: float, ignore_factorial=True
 ) -> float:
@@ -79,4 +78,3 @@ def ln_likelihood(
     if detailed:
         return np.array([lnl, poisson_lnl, mcz_lnl, model_n_detections])
     return lnl
-

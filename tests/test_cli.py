@@ -84,7 +84,7 @@ def test_cli_batch_lnl_generation(mock_data, tmp_path):
             tmp_path,
         ],
     )
-    assert out.exit_code == 0, f'Error in batch_lnl_generation: {out.stdout}'
+    assert out.exit_code == 0, f"Error in batch_lnl_generation: {out.stdout}"
 
     # STEP 4: combine lnl data
     comb_fname = f"{tmp_path}/combined_lnl_data.csv"
@@ -93,4 +93,4 @@ def test_cli_batch_lnl_generation(mock_data, tmp_path):
     )
     data = pd.read_csv(comb_fname)
     assert len(data) == 2
-    assert out.exit_code == 0, f'Error in combine_lnl_data: {out.stdout}'
+    assert out.exit_code == 0, f"Error in combine_lnl_data: {out.stdout}"

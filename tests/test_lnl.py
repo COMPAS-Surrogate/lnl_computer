@@ -27,8 +27,12 @@ def test_lnl(mock_data: MockData):
     assert np.isnan(unc)
     expected_lnl = 10647.1
     np.testing.assert_allclose(
-        lnl, expected_lnl, atol=200, err_msg=f"lnl={lnl:.1f} not close to {expected_lnl}"
+        lnl,
+        expected_lnl,
+        atol=200,
+        err_msg=f"lnl={lnl:.1f} not close to {expected_lnl}",
     )
+
 
 @pytest.mark.skip(reason="Takes too long")
 def test_lnl_nan(mock_data: MockData, tmp_path: str):
@@ -54,5 +58,8 @@ def test_duration(mock_data: MockData):
 
 def test_ogc4_lnl(monkeypatched_mcz_grid: McZGrid, tmp_path: str):
     obs = LVKObservation.from_ogc4_data()
-    lnl, _, = monkeypatched_mcz_grid.get_lnl(mcz_obs=obs)
+    (
+        lnl,
+        _,
+    ) = monkeypatched_mcz_grid.get_lnl(mcz_obs=obs)
     assert lnl > -np.inf
