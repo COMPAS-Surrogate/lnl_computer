@@ -1,4 +1,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/COMPAS-Surrogate/lnl_computer/badge.svg)](https://coveralls.io/github/COMPAS-Surrogate/lnl_computer)
+[![PyPI version](https://badge.fury.io/py/compas-surrogate.lnl_computer.svg?icon=si%3Apython)](https://badge.fury.io/py/compas-surrogate.lnl_computer)
+
 # [COMPAS Detection Likelihood computer](https://github.com/COMPAS-Surrogate/lnl_computer)
 
 Utils to run the COMPAS cosmic-integration code in batches and compute the LnL given SF params and set of observations.
