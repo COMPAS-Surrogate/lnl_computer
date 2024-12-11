@@ -7,13 +7,13 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "lnl_computer"
-dynamic = ["version"] # scm versioning (using tags)
+name = "compas_surrogate.lnl_computer"  # PyPI name, prefixed with 'compas_surrogate'
+dynamic = ["version"]  # scm versioning (using tags)
 requires-python = ">=3.8"
 description = "COMPAS detection Likelihood computer"
 readme = "README.md"
 authors = [
-    {name = "Avi Vajpeyi", email = "avi.fvajpeyi@gmail.com" },
+    {name = "Avi Vajpeyi", email = "avi.vajpeyi@gmail.com" },
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -30,8 +30,8 @@ dependencies = [
     "bilby",
     "loguru",
     "colorlog",
+    "compas_surrogate.ogc4_interface",
     "compas_python_utils@git+https://github.com/TeamCOMPAS/COMPAS.git",
-    "ogc4_interface@git+https://github.com/COMPAS-Surrogate/ogc4_interface.git"
 ]
 
 [project.optional-dependencies]
@@ -47,18 +47,19 @@ dev = [
 [tool.setuptools_scm]
 version_file = "src/lnl_computer/_version.py"
 
+[tool.semantic_release]
+version_variable = "src/lnl_computer/_version.py:__version__"
+version_source = "commit"
+commit_version_number = true
+commit_subject = "chore(release): {version}"
+commit_message = "chore(release): {version}"
+tag_format = "v{version}"
+no_local_version = true
 
-[project.urls]  # Optional
-"Homepage" = "https://github.com/avivajpeyi/compas_detection_likelihood_computer"
-"Bug Reports" = "https://github.com/avivajpeyi/compas_detection_likelihood_computer/issues"
-"Source" = "https://github.com/avivajpeyi/compas_detection_likelihood_computer/"
-
-
-[tool.setuptools]
-package-data = { "lnl_computer" = [
-    "templates/*.sh",
-] }
-
+[project.urls]  # Updated URL base
+"Homepage" = "https://github.com/COMPAS-Surrogate/lnl_computer"
+"Bug Reports" = "https://github.com/COMPAS-Surrogate/lnl_computer/issues"
+"Source" = "https://github.com/COMPAS-Surrogate/lnl_computer/"
 
 [project.scripts]
 combine_lnl_data = "lnl_computer.cli.cli:cli_combine_lnl_data"
@@ -66,7 +67,6 @@ batch_lnl_generation = "lnl_computer.cli.cli:cli_batch_lnl_generation"
 make_mock_obs = "lnl_computer.cli.cli:cli_make_mock_obs"
 make_sf_table = "lnl_computer.cli.cli:cli_make_sf_table"
 make_mock_compas_output = "lnl_computer.cli.cli:cli_make_mock_compas_output"
-
 
 [tool.black]
 line-length = 79
@@ -88,7 +88,6 @@ exclude = '''
 [tool.isort]
 profile = "black"
 line_length = 79
-
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
