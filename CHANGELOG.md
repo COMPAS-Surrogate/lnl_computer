@@ -1,9 +1,26 @@
 # CHANGELOG
 
 
-## v0.1.2 (2024-12-11)
+## v0.2.0 (2024-12-12)
+
+### Features
+
+* feat: update to pip released compas_python_utils ([`533c9ba`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/533c9ba109ebc7608a7f1fcc878f2cf83807a27b))
 
 ### Unknown
+
+* Merge branch 'main' of github.com:COMPAS-Surrogate/lnl_computer into main ([`ae26a62`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/ae26a6223440686e390a7ebc560e757d32fc5217))
+
+
+## v0.1.2 (2024-12-11)
+
+### Chores
+
+* chore(release): 0.1.2 ([`6ce84c9`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/6ce84c936e5d2c4454cabdf66eaaa9005b910928))
+
+### Unknown
+
+* only release after tests pass ([`89dda63`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/89dda634188edea6127fb63406d95b22daf9df08))
 
 * Merge branch 'main' of github.com:COMPAS-Surrogate/lnl_computer into main ([`aae1fad`](https://github.com/COMPAS-Surrogate/lnl_computer/commit/aae1fad92253f2236123e50b9b448bb380e0a74a))
 
