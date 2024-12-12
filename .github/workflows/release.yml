@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-#  workflow_run:
-#    workflows: ['Tests and Coverage']
-#    types:
-#      - completed
-#
+  workflow_run:
+    workflows: ['Tests and Coverage']
+    types:
+      - completed
+
 
 jobs:
 
